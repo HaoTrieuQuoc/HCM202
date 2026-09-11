@@ -3,18 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Đấu Trường Chương 3 | Ôn tập nhóm</title>
-  <meta name="description" content="Trò chơi ôn tập Chương 3 Tư tưởng Hồ Chí Minh cho 5 nhóm">
+  <title>Đường Đua Chương 3 | Game ôn tập</title>
+  <meta name="description" content="Game đường đua trắc nghiệm ôn tập Chương 3 Tư tưởng Hồ Chí Minh cho 5 nhóm">
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="css/game.css">
 </head>
 <body>
   <div class="game-bg" aria-hidden="true"></div>
+
   <header class="game-header">
-    <a class="brand" href="index.html">
-      <span>HCM</span>
-      <strong>Đấu Trường Chương 3</strong>
-    </a>
+    <a class="brand" href="index.html"><span>HCM</span><strong>Đường Đua Chương 3</strong></a>
     <div class="header-actions">
       <button class="ghost-btn" id="publicModeBtn">Màn hình lớp</button>
       <button class="gold-btn" id="adminOpenBtn">Quản trò</button>
@@ -24,96 +22,87 @@
   <main class="game-shell">
     <section class="hero-panel">
       <div>
-        <span class="eyebrow">Game ôn tập cho 5 nhóm</span>
-        <h1>Vượt mốc độc lập, mở khóa CNXH</h1>
-        <p>Mỗi lượt chọn một nhóm, quay thử thách, đọc câu hỏi, bật đáp án khi cần và chấm điểm ngay trên màn hình.</p>
+        <span class="eyebrow">5 nhóm đua tới đích</span>
+        <h1>Trả lời đúng, tung xúc xắc, vượt chông gai</h1>
+        <p>Nhóm trả lời trắc nghiệm đúng mới được tung xúc xắc đi 1-6 ô. Gặp ô may mắn thì tiến nhanh, gặp chông gai thì bị thử thách hoặc lùi bước.</p>
       </div>
       <div class="round-card">
-        <span>Vòng hiện tại</span>
-        <strong id="roundNum">1</strong>
-        <small id="roundHint">Khởi động</small>
+        <span>Lượt hiện tại</span>
+        <strong id="turnNum">1</strong>
+        <small id="currentTeamLabel">Nhóm 1</small>
       </div>
     </section>
 
-    <section class="scoreboard" id="scoreboard"></section>
-
-    <section class="play-grid">
-      <div class="arena-card challenge-card">
-        <div class="section-head">
-          <span>Thử thách</span>
-          <button class="icon-btn" id="shuffleBtn" aria-label="Quay thử thách">↻</button>
-        </div>
-        <div class="wheel" id="wheel">
-          <div class="wheel-core">
-            <span id="wheelType">Sẵn sàng</span>
-            <strong id="wheelPoints">+10</strong>
+    <section class="race-layout">
+      <div class="track-panel">
+        <div class="track-head">
+          <div>
+            <span class="eyebrow">Đường đua độc lập</span>
+            <h2>Xuất phát → Về đích</h2>
           </div>
+          <div class="dice-display" id="diceDisplay">?</div>
         </div>
-        <div class="challenge-meta">
-          <span id="questionCount">0/0 câu đã dùng</span>
-          <span id="currentTeamLabel">Chưa chọn nhóm</span>
-        </div>
+        <div class="track" id="track"></div>
       </div>
 
-      <div class="arena-card question-card">
-        <div class="section-head">
-          <span id="questionTopic">Câu hỏi</span>
-          <div class="timer" id="timer">45</div>
+      <aside class="leaderboard">
+        <div class="side-head">
+          <span>Bảng xếp hạng</span>
+          <button class="icon-btn" id="nextTeamBtn" aria-label="Chuyển lượt">→</button>
         </div>
-        <h2 id="questionText">Quản trò đăng nhập, chọn nhóm và bấm “Quay thử thách” để bắt đầu.</h2>
-        <div class="answer-box" id="answerBox">
-          <span>Gợi ý đáp án</span>
-          <p id="answerText">Đáp án sẽ hiện ở đây khi quản trò bấm mở.</p>
+        <div id="teamList"></div>
+      </aside>
+    </section>
+
+    <section class="question-panel">
+      <div class="question-top">
+        <div>
+          <span class="eyebrow" id="questionTopic">Câu hỏi trắc nghiệm</span>
+          <h2 id="questionText">Quản trò đăng nhập, chọn nhóm và bấm “Bốc câu hỏi”.</h2>
         </div>
+        <div class="timer" id="timer">45</div>
       </div>
+      <div class="choices" id="choices"></div>
+      <div class="answer-line" id="answerLine">Đáp án đúng sẽ hiện khi quản trò mở đáp án.</div>
+    </section>
+
+    <section class="event-panel" id="eventPanel">
+      <span class="eyebrow">Ô đặc biệt</span>
+      <h2 id="eventTitle">Chưa có biến cố</h2>
+      <p id="eventText">Khi một nhóm dừng ở ô may mắn hoặc chông gai, hiệu ứng sẽ xuất hiện ở đây để quản trò áp dụng.</p>
     </section>
 
     <section class="control-panel" id="controlPanel" aria-hidden="true">
       <div class="control-top">
         <div>
           <span class="eyebrow">Bảng điều khiển quản trò</span>
-          <h2>Chọn nhóm, quay câu hỏi, chấm điểm</h2>
+          <h2>Điều khiển 5 nhóm trên đường đua</h2>
         </div>
         <button class="ghost-btn" id="logoutBtn">Đăng xuất</button>
       </div>
 
       <div class="controls">
-        <label>
-          Nhóm đang chơi
-          <select id="teamSelect"></select>
-        </label>
-        <label>
-          Thời gian
-          <select id="timeSelect">
-            <option value="30">30 giây</option>
-            <option value="45" selected>45 giây</option>
-            <option value="60">60 giây</option>
-            <option value="90">90 giây</option>
-          </select>
-        </label>
-        <button class="gold-btn" id="drawBtn">Quay thử thách</button>
-        <button class="ghost-btn" id="revealBtn">Mở đáp án</button>
+        <label>Nhóm đang chơi<select id="teamSelect"></select></label>
+        <label>Thời gian<select id="timeSelect"><option value="30">30 giây</option><option value="45" selected>45 giây</option><option value="60">60 giây</option><option value="90">90 giây</option></select></label>
+        <button class="gold-btn" id="drawQuestionBtn">Bốc câu hỏi</button>
         <button class="ghost-btn" id="startTimerBtn">Bắt đầu giờ</button>
+        <button class="ghost-btn" id="revealAnswerBtn">Mở đáp án</button>
       </div>
 
       <div class="judge-row">
-        <button class="judge correct" id="correctBtn">Đúng + điểm</button>
-        <button class="judge partial" id="partialBtn">Gần đúng + nửa điểm</button>
-        <button class="judge wrong" id="wrongBtn">Sai -5</button>
-        <button class="judge steal" id="stealBtn">Cướp quyền +5</button>
+        <button class="judge correct" id="correctBtn">Đúng: tung xúc xắc</button>
+        <button class="judge wrong" id="wrongBtn">Sai: đứng yên</button>
+        <button class="judge lucky" id="applyEventBtn">Áp dụng ô đặc biệt</button>
+        <button class="judge manual" id="manualForwardBtn">Tiến +1</button>
+        <button class="judge manual" id="manualBackBtn">Lùi -1</button>
         <button class="judge reset" id="resetGameBtn">Reset game</button>
       </div>
     </section>
 
     <section class="rules">
-      <article>
-        <strong>Luật gợi ý</strong>
-        <p>5 nhóm lần lượt trả lời. Đúng nhận đủ điểm, gần đúng nhận nửa điểm, sai bị trừ 5. Nhóm khác có thể cướp quyền nếu quản trò cho phép.</p>
-      </article>
-      <article>
-        <strong>Loại thử thách</strong>
-        <p>Tia chớp, giải thích nhanh, nối ý, tình huống CQ3 và câu hỏi cướp quyền để nhịp chơi không bị đều đều.</p>
-      </article>
+      <article><strong>Cách chơi</strong><p>Mỗi lượt quản trò bốc một câu trắc nghiệm. Trả lời đúng thì nhóm được tung xúc xắc và di chuyển. Trả lời sai thì đứng yên và chuyển lượt.</p></article>
+      <article><strong>Ô may mắn</strong><p>Có thể tiến thêm, đổi vị trí, miễn chông gai hoặc được bốc lại xúc xắc tùy thẻ xuất hiện.</p></article>
+      <article><strong>Ô chông gai</strong><p>Có thể lùi bước, mất lượt, bị câu hỏi phụ hoặc phải đứng yên một lượt. Quản trò có toàn quyền áp dụng.</p></article>
     </section>
   </main>
 
