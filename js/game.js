@@ -3,6 +3,8 @@
 
   const ADMIN_PASSWORD = "3108";
   const FINISH = 30;
+  const STORAGE_KEY = "hcmRaceV3State";
+  const letters = ["A", "B", "C", "D"];
   const teams = [
     { id: "team-1", name: "Nhóm 1", short: "1" },
     { id: "team-3", name: "Nhóm 3", short: "3" },
@@ -11,15 +13,15 @@
     { id: "team-6", name: "Nhóm 6", short: "6" }
   ];
   const specialTiles = {
-    4: { kind: "lucky", icon: "★", title: "Gió thuận!", text: "Tiến thêm 2 ô.", move: 2 },
-    7: { kind: "trap", icon: "!", title: "Chông gai", text: "Lùi 2 ô vì mất cảnh giác.", move: -2 },
-    10: { kind: "challenge", icon: "?", title: "Câu hỏi phụ", text: "Trả lời đúng câu phụ để tiến thêm 1 ô, sai đứng yên.", move: 0 },
-    13: { kind: "lucky", icon: "★", title: "Đại đoàn kết", text: "Chọn một nhóm phía sau cùng tiến 1 ô.", move: 0 },
-    16: { kind: "trap", icon: "!", title: "Mất lượt", text: "Lượt sau phải trả lời đúng mới được tung xúc xắc.", move: 0 },
-    19: { kind: "lucky", icon: "★", title: "Tự lực cánh sinh", text: "Tiến thêm 3 ô.", move: 3 },
-    22: { kind: "challenge", icon: "?", title: "CQ3 bất ngờ", text: "Quản trò hỏi thêm: CNXH là mục đích hay công cụ?", move: 0 },
-    25: { kind: "trap", icon: "!", title: "Lạc hướng", text: "Lùi 3 ô.", move: -3 },
-    28: { kind: "lucky", icon: "★", title: "Về đích thần tốc", text: "Tiến thêm 1 ô.", move: 1 }
+    4: { kind: "lucky", icon: "+", title: "Gió thuận", text: "Tiến thêm 2 ô vì nắm chắc ý chính.", move: 2 },
+    7: { kind: "trap", icon: "!", title: "Chông gai", text: "Lùi 2 ô vì lập luận còn thiếu dẫn chứng.", move: -2 },
+    10: { kind: "challenge", icon: "?", title: "Câu hỏi phụ", text: "Quản trò hỏi thêm một ý ngắn. Đóng lá thăm để chuyển lượt.", move: 0 },
+    13: { kind: "lucky", icon: "+", title: "Đại đoàn kết", text: "Cả lớp cổ vũ. Nhóm được tiến thêm 1 ô.", move: 1 },
+    16: { kind: "trap", icon: "!", title: "Mất nhịp", text: "Lượt sau nhóm bị bỏ qua một lần.", skip: 1 },
+    19: { kind: "lucky", icon: "+", title: "Tự lực cánh sinh", text: "Tiến thêm 3 ô nhờ xử lý câu hỏi tự tin.", move: 3 },
+    22: { kind: "challenge", icon: "?", title: "CQ3 bất ngờ", text: "Giải thích nhanh: Chủ nghĩa xã hội là mục đích hay con đường bảo đảm độc lập?", move: 0 },
+    25: { kind: "trap", icon: "!", title: "Lạc hướng", text: "Lùi 3 ô vì nhầm giữa độc lập hình thức và độc lập thực chất.", move: -3 },
+    28: { kind: "lucky", icon: "+", title: "Bứt phá", text: "Tiến thêm 1 ô trước vạch đích.", move: 1 }
   };
   const questions = [
     { topic: "Độc lập dân tộc", q: "Theo Hồ Chí Minh, độc lập dân tộc trước hết là gì?", choices: ["Một khẩu hiệu chính trị", "Quyền thiêng liêng, bất khả xâm phạm của dân tộc", "Một mục tiêu kinh tế ngắn hạn", "Một hình thức ngoại giao"], correct: 1 },
@@ -32,26 +34,28 @@
     { topic: "Nền tảng lực lượng", q: "Trong khối đại đoàn kết, nền tảng quan trọng được nhấn mạnh là gì?", choices: ["Công nhân và nông dân", "Thương nhân nước ngoài", "Địa chủ", "Quân đội nước khác"], correct: 0 },
     { topic: "Chủ động sáng tạo", q: "Cách mạng thuộc địa cần có thái độ nào?", choices: ["Chờ cách mạng chính quốc", "Chủ động, sáng tạo, tự lực cánh sinh", "Phụ thuộc hoàn toàn", "Không cần tổ chức"], correct: 1 },
     { topic: "Đấu tranh", q: "Hồ Chí Minh nhấn mạnh cần kết hợp những hình thức đấu tranh nào?", choices: ["Chỉ kinh tế", "Chỉ văn hóa", "Chính trị và vũ trang khi cần thiết", "Chỉ ngoại giao"], correct: 2 },
-    { topic: "CNXH", q: "Một đặc trưng cốt lõi của CNXH theo tư tưởng Hồ Chí Minh là gì?", choices: ["Nhân dân làm chủ", "Ít người quyết định tất cả", "Xóa bỏ văn hóa", "Không phát triển kinh tế"], correct: 0 },
-    { topic: "Kinh tế", q: "Xây dựng CNXH cần phát triển yếu tố nào để đất nước thoát nghèo nàn, lạc hậu?", choices: ["Cơ sở vật chất - kỹ thuật", "Tập quán cũ", "Tâm lý ỷ lại", "Sự chia rẽ"], correct: 0 },
-    { topic: "Văn hóa", q: "CNXH theo Hồ Chí Minh cần xây dựng đời sống văn hóa như thế nào?", choices: ["Lành mạnh, tiến bộ, bồi dưỡng đạo đức", "Lạc hậu", "Khép kín", "Xa rời nhân dân"], correct: 0 },
-    { topic: "Xây và chống", q: "Trong xây dựng CNXH, 'chống' là chống điều gì?", choices: ["Học tập", "Lao động", "Suy thoái, tham nhũng, lãng phí", "Đoàn kết"], correct: 2 },
-    { topic: "Quan hệ hai chiều", q: "Độc lập dân tộc có vai trò gì đối với CNXH?", choices: ["Là tiền đề để tiến lên CNXH", "Không liên quan", "Là vật cản", "Chỉ là khẩu hiệu"], correct: 0 },
-    { topic: "Quan hệ hai chiều", q: "CNXH có vai trò gì đối với độc lập dân tộc?", choices: ["Làm độc lập suy yếu", "Bảo đảm độc lập có nội dung thực chất và bền vững", "Thay thế độc lập", "Không cần nhân dân"], correct: 1 },
+    { topic: "CNXH", q: "Một đặc trưng cốt lõi của chủ nghĩa xã hội theo tư tưởng Hồ Chí Minh là gì?", choices: ["Nhân dân làm chủ", "Ít người quyết định tất cả", "Xóa bỏ văn hóa", "Không phát triển kinh tế"], correct: 0 },
+    { topic: "Kinh tế", q: "Xây dựng chủ nghĩa xã hội cần phát triển yếu tố nào để đất nước thoát nghèo nàn, lạc hậu?", choices: ["Cơ sở vật chất - kỹ thuật", "Tập quán cũ", "Tâm lý ỷ lại", "Sự chia rẽ"], correct: 0 },
+    { topic: "Văn hóa", q: "Chủ nghĩa xã hội theo Hồ Chí Minh cần xây dựng đời sống văn hóa như thế nào?", choices: ["Lành mạnh, tiến bộ, bồi dưỡng đạo đức", "Lạc hậu", "Khép kín", "Xa rời nhân dân"], correct: 0 },
+    { topic: "Xây và chống", q: "Trong xây dựng chủ nghĩa xã hội, 'chống' là chống điều gì?", choices: ["Học tập", "Lao động", "Suy thoái, tham nhũng, lãng phí", "Đoàn kết"], correct: 2 },
+    { topic: "Quan hệ hai chiều", q: "Độc lập dân tộc có vai trò gì đối với chủ nghĩa xã hội?", choices: ["Là tiền đề để tiến lên chủ nghĩa xã hội", "Không liên quan", "Là vật cản", "Chỉ là khẩu hiệu"], correct: 0 },
+    { topic: "Quan hệ hai chiều", q: "Chủ nghĩa xã hội có vai trò gì đối với độc lập dân tộc?", choices: ["Làm độc lập suy yếu", "Bảo đảm độc lập có nội dung thực chất và bền vững", "Thay thế độc lập", "Không cần nhân dân"], correct: 1 },
     { topic: "CQ3", q: "Câu trả lời cân bằng nhất cho câu hỏi 'CNXH là mục đích hay công cụ?' là gì?", choices: ["Chỉ là công cụ", "Chỉ là khẩu hiệu", "Vừa là mục tiêu chiến lược, vừa là con đường và điều kiện bảo đảm độc lập", "Không liên quan đến độc lập"], correct: 2 },
     { topic: "Ứng dụng", q: "Nếu một nhóm nói 'giành độc lập là xong', phản biện đúng là gì?", choices: ["Đúng hoàn toàn", "Sai, vì phải xây dựng xã hội mới để nhân dân thật sự tự do, ấm no, hạnh phúc", "Không cần phát triển", "Chỉ cần tên nước độc lập"], correct: 1 },
     { topic: "Tổng hợp", q: "Bộ ba từ khóa nào phù hợp nhất với Chương 3?", choices: ["Độc lập - Nhân dân - CNXH", "Cô lập - Đóng cửa - Trì trệ", "Cá nhân - May rủi - Tự phát", "Phụ thuộc - Chia cắt - Lạc hậu"], correct: 0 },
     { topic: "Giá trị thực chất", q: "Theo tư tưởng Hồ Chí Minh, người thụ hưởng thành quả độc lập phải là ai?", choices: ["Nhân dân", "Một nhóm đặc quyền", "Chỉ người lãnh đạo", "Người ngoài nước"], correct: 0 }
   ];
 
-  const $ = s => document.querySelector(s);
-  const $$ = s => [...document.querySelectorAll(s)];
-  const letters = ["A", "B", "C", "D"];
+  const $ = selector => document.querySelector(selector);
+  const $$ = selector => [...document.querySelectorAll(selector)];
+  const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
   const state = loadState();
   let currentQuestion = null;
+  let answered = false;
+  let busy = false;
+  let pendingEvent = null;
   let timerId = null;
   let remaining = Number($("#timeSelect")?.value || 45);
-  let pendingEvent = null;
 
   function freshState() {
     return {
@@ -59,27 +63,26 @@
       turn: 1,
       activeTeam: teams[0].id,
       used: [],
-      positions: Object.fromEntries(teams.map(t => [t.id, 0])),
-      skips: Object.fromEntries(teams.map(t => [t.id, 0])),
+      positions: Object.fromEntries(teams.map(team => [team.id, 0])),
+      skips: Object.fromEntries(teams.map(team => [team.id, 0])),
       winner: null
     };
   }
 
   function loadState() {
     try {
-      const saved = JSON.parse(localStorage.getItem("hcmRaceState") || "null");
-      return { ...freshState(), ...saved, admin: false };
+      return { ...freshState(), ...JSON.parse(localStorage.getItem(STORAGE_KEY) || "null"), admin: false };
     } catch {
       return freshState();
     }
   }
 
   function saveState() {
-    localStorage.setItem("hcmRaceState", JSON.stringify({ ...state, admin: false }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...state, admin: false }));
   }
 
   function teamById(id) {
-    return teams.find(t => t.id === id) || teams[0];
+    return teams.find(team => team.id === id) || teams[0];
   }
 
   function showToast(text) {
@@ -87,28 +90,28 @@
     toast.textContent = text;
     toast.classList.add("show");
     clearTimeout(showToast.timer);
-    showToast.timer = setTimeout(() => toast.classList.remove("show"), 2000);
+    showToast.timer = setTimeout(() => toast.classList.remove("show"), 2200);
   }
 
-  function renderTrack() {
+  function renderTrack(landingPosition = null) {
     const track = $("#track");
     track.innerHTML = "";
-    for (let i = 0; i <= FINISH; i++) {
+    for (let i = 0; i <= FINISH; i += 1) {
       const special = specialTiles[i];
       const tile = document.createElement("div");
-      tile.className = `tile ${i === 0 ? "start" : ""} ${i === FINISH ? "finish" : ""} ${special?.kind || ""}`;
+      tile.className = `tile ${i === 0 ? "start" : ""} ${i === FINISH ? "finish" : ""} ${special?.kind || ""} ${landingPosition === i ? "active-landing" : ""}`;
       tile.innerHTML = `
         <div class="tile-num">${i === 0 ? "Start" : i === FINISH ? "Đích" : i}</div>
         <div class="tile-type">${special?.icon || (i === FINISH ? "🏁" : "")}</div>
         <div class="tokens"></div>
       `;
-      const tokens = tile.querySelector(".tokens");
-      teams.filter(t => state.positions[t.id] === i).forEach(t => {
+      const tokenWrap = tile.querySelector(".tokens");
+      teams.filter(team => state.positions[team.id] === i).forEach(team => {
         const token = document.createElement("span");
-        token.className = `token ${t.id}`;
-        token.textContent = t.short;
-        token.title = t.name;
-        tokens.appendChild(token);
+        token.className = `token ${team.id}`;
+        token.textContent = team.short;
+        token.title = team.name;
+        tokenWrap.appendChild(token);
       });
       track.appendChild(tile);
     }
@@ -116,13 +119,14 @@
 
   function renderTeams() {
     const sorted = [...teams].sort((a, b) => state.positions[b.id] - state.positions[a.id]);
-    $("#teamList").innerHTML = sorted.map(t => {
-      const pos = state.positions[t.id];
+    $("#teamList").innerHTML = sorted.map(team => {
+      const pos = state.positions[team.id];
       const pct = Math.min(100, Math.round(pos / FINISH * 100));
+      const status = state.skips[team.id] ? "Đang bị mất lượt" : pct >= 100 ? "Đã về đích" : `Còn ${FINISH - pos} ô`;
       return `
-        <article class="team-card ${state.activeTeam === t.id ? "active" : ""} ${state.winner === t.id ? "winner" : ""}">
-          <div class="team-line"><span><span class="token ${t.id}">${t.short}</span> ${t.name}</span><strong>${pos}/${FINISH}</strong></div>
-          <div class="team-pos">${state.skips[t.id] ? "Đang bị mất lượt" : pct >= 100 ? "Đã về đích" : `Còn ${FINISH - pos} ô`}</div>
+        <article class="team-card ${state.activeTeam === team.id ? "active" : ""} ${state.winner === team.id ? "winner" : ""}">
+          <div class="team-line"><span><span class="token ${team.id}">${team.short}</span>${team.name}</span><strong>${pos}/${FINISH}</strong></div>
+          <div class="team-pos">${status}</div>
           <div class="progress"><span style="--p:${pct}%"></span></div>
         </article>
       `;
@@ -133,126 +137,169 @@
   }
 
   function renderControls() {
-    $("#teamSelect").innerHTML = teams.map(t => `<option value="${t.id}">${t.name}</option>`).join("");
+    $("#teamSelect").innerHTML = teams.map(team => `<option value="${team.id}">${team.name}</option>`).join("");
     $("#teamSelect").value = state.activeTeam;
   }
 
-  function renderAll() {
-    renderTrack();
+  function renderAll(landingPosition = null) {
+    renderTrack(landingPosition);
     renderTeams();
   }
 
+  function resetQuestionView() {
+    answered = false;
+    $("#choices").innerHTML = "";
+    $("#answerLine").className = "answer-line";
+    $("#answerLine").textContent = "Chọn đáp án để biết đúng/sai.";
+  }
+
   function pickQuestion() {
+    if (busy) return showToast("Đang xử lý lượt hiện tại");
+    if (pendingEvent) return showToast("Hãy đóng lá thăm trước khi bốc câu hỏi mới");
     if (state.used.length >= questions.length) state.used = [];
-    const available = questions.map((_, i) => i).filter(i => !state.used.includes(i));
-    const idx = available[Math.floor(Math.random() * available.length)];
-    state.used.push(idx);
-    currentQuestion = questions[idx];
+    const available = questions.map((_, index) => index).filter(index => !state.used.includes(index));
+    const index = available[Math.floor(Math.random() * available.length)];
+    currentQuestion = questions[index];
+    state.used.push(index);
+    resetQuestionView();
     $("#questionTopic").textContent = currentQuestion.topic;
     $("#questionText").textContent = currentQuestion.q;
     $("#choices").innerHTML = currentQuestion.choices.map((choice, i) => `<button class="choice" data-letter="${letters[i]}" data-index="${i}">${choice}</button>`).join("");
-    $("#answerLine").classList.remove("show");
-    $("#answerLine").textContent = "Đáp án đúng sẽ hiện khi quản trò mở đáp án.";
+    $("#diceCaption").textContent = `${teamById(state.activeTeam).name} chọn đáp án`;
     saveState();
     resetTimer();
   }
 
-  function revealAnswer() {
-    if (!currentQuestion) return showToast("Chưa có câu hỏi");
-    $$(".choice").forEach(btn => btn.classList.toggle("correct-choice", Number(btn.dataset.index) === currentQuestion.correct));
-    $("#answerLine").textContent = `Đáp án đúng: ${letters[currentQuestion.correct]}. ${currentQuestion.choices[currentQuestion.correct]}`;
-    $("#answerLine").classList.add("show");
+  function setChoicesLocked() {
+    $$(".choice").forEach(button => button.classList.add("is-disabled"));
   }
 
-  function rollDice() {
+  async function chooseAnswer(button) {
+    if (!currentQuestion || answered || busy) return;
+    answered = true;
+    setChoicesLocked();
+    const index = Number(button.dataset.index);
+    const correctButton = $(`.choice[data-index="${currentQuestion.correct}"]`);
+    if (index !== currentQuestion.correct) {
+      button.classList.add("wrong-choice");
+      correctButton?.classList.add("correct-choice");
+      $("#answerLine").className = "answer-line wrong";
+      $("#answerLine").textContent = `Sai rồi. Đáp án đúng là ${letters[currentQuestion.correct]}: ${currentQuestion.choices[currentQuestion.correct]}.`;
+      showToast(`${teamById(state.activeTeam).name} đứng yên`);
+      await wait(1800);
+      nextTeam(false);
+      return;
+    }
+    button.classList.add("correct-choice");
+    $("#answerLine").className = "answer-line correct";
+    $("#answerLine").textContent = "Đúng! Xúc xắc đang lăn...";
+    await wait(450);
+    await rollDice();
+  }
+
+  async function rollDice() {
+    if (busy || state.winner) return;
+    busy = true;
     const dice = $("#diceDisplay");
     dice.classList.add("rolling");
-    let flashes = 0;
-    const flashing = setInterval(() => {
+    $("#diceCaption").textContent = "Đang tung...";
+    for (let i = 0; i < 14; i += 1) {
       dice.textContent = Math.floor(Math.random() * 6) + 1;
-      flashes += 1;
-      if (flashes >= 10) {
-        clearInterval(flashing);
-        const value = Math.floor(Math.random() * 6) + 1;
-        dice.textContent = value;
-        dice.classList.remove("rolling");
-        moveActive(value);
-      }
-    }, 70);
-  }
-
-  function moveTeam(id, delta) {
-    state.positions[id] = Math.max(0, Math.min(FINISH, state.positions[id] + delta));
-    if (state.positions[id] >= FINISH && !state.winner) {
-      state.winner = id;
-      showToast(`${teamById(id).name} đã về đích!`);
+      await wait(58);
     }
-    const special = specialTiles[state.positions[id]];
-    pendingEvent = special ? { ...special, teamId: id } : null;
-    renderEvent();
-    saveState();
-    renderAll();
+    const value = Math.floor(Math.random() * 6) + 1;
+    dice.textContent = value;
+    dice.classList.remove("rolling");
+    $("#diceCaption").textContent = `Đi ${value} ô`;
+    await animateMoveTeam(state.activeTeam, value, true);
+    busy = false;
+    afterMove(state.activeTeam);
   }
 
-  function moveActive(delta) {
-    moveTeam(state.activeTeam, delta);
+  async function animateMoveTeam(teamId, delta, canDrawEvent) {
+    const direction = delta >= 0 ? 1 : -1;
+    for (let step = 0; step < Math.abs(delta); step += 1) {
+      state.positions[teamId] = Math.max(0, Math.min(FINISH, state.positions[teamId] + direction));
+      renderAll(state.positions[teamId]);
+      saveState();
+      await wait(250);
+      if (state.positions[teamId] === FINISH) break;
+    }
+    if (state.positions[teamId] >= FINISH && !state.winner) {
+      state.winner = teamId;
+      openFinish(teamId);
+    }
+    if (canDrawEvent && !state.winner) {
+      const special = specialTiles[state.positions[teamId]];
+      pendingEvent = special ? { ...special, teamId } : null;
+      if (pendingEvent) openChanceModal(pendingEvent);
+    }
+    renderAll(state.positions[teamId]);
+  }
+
+  function afterMove(teamId) {
+    if (state.winner) return;
+    if (pendingEvent) {
+      showToast(`${teamById(teamId).name} bốc được một lá thăm`);
+      return;
+    }
+    nextTeam(false);
+  }
+
+  function openChanceModal(event) {
+    const labels = { lucky: "May mắn", trap: "Chông gai", challenge: "Thử thách" };
+    const modal = $("#chanceModal");
+    modal.className = `chance-modal is-open ${event.kind}`;
+    modal.setAttribute("aria-hidden", "false");
+    $("#eventKind").textContent = `${teamById(event.teamId).name} - ${labels[event.kind] || "Ô đặc biệt"}`;
+    $("#eventTitle").textContent = event.title;
+    $("#eventText").textContent = event.text;
+  }
+
+  async function closeChanceAndApply() {
+    if (busy || !pendingEvent) return;
+    const event = pendingEvent;
+    pendingEvent = null;
+    $("#chanceModal").className = "chance-modal";
+    $("#chanceModal").setAttribute("aria-hidden", "true");
+    busy = true;
+    if (event.move) {
+      $("#diceCaption").textContent = `${event.move > 0 ? "+" : ""}${event.move} ô từ lá thăm`;
+      await animateMoveTeam(event.teamId, event.move, false);
+    } else if (event.skip) {
+      state.skips[event.teamId] = event.skip;
+      saveState();
+      renderAll();
+    }
+    busy = false;
     if (!state.winner) nextTeam(false);
   }
 
   function nextTeam(show = true) {
-    let idx = teams.findIndex(t => t.id === state.activeTeam);
-    for (let step = 1; step <= teams.length; step++) {
-      const next = teams[(idx + step) % teams.length];
-      if (state.skips[next.id] > 0) {
-        state.skips[next.id] -= 1;
+    currentQuestion = null;
+    resetQuestionView();
+    clearInterval(timerId);
+    timerId = null;
+    let index = teams.findIndex(team => team.id === state.activeTeam);
+    const skipped = [];
+    for (let step = 1; step <= teams.length; step += 1) {
+      const candidate = teams[(index + step) % teams.length];
+      if (state.skips[candidate.id] > 0) {
+        state.skips[candidate.id] -= 1;
+        skipped.push(candidate.name);
         continue;
       }
-      state.activeTeam = next.id;
+      state.activeTeam = candidate.id;
       break;
     }
     state.turn += 1;
     saveState();
     renderAll();
-    if (show) showToast(`Đến lượt ${teamById(state.activeTeam).name}`);
-  }
-
-  function renderEvent() {
-    const panel = $("#eventPanel");
-    panel.className = "event-panel";
-    if (!pendingEvent) {
-      $("#eventTitle").textContent = "Chưa có biến cố";
-      $("#eventText").textContent = "Khi một nhóm dừng ở ô may mắn hoặc chông gai, hiệu ứng sẽ xuất hiện ở đây để quản trò áp dụng.";
-      return;
-    }
-    panel.classList.add("show", pendingEvent.kind);
-    $("#eventTitle").textContent = `${teamById(pendingEvent.teamId).name}: ${pendingEvent.title}`;
-    $("#eventText").textContent = pendingEvent.text;
-  }
-
-  function applyEvent() {
-    if (!pendingEvent) return showToast("Không có ô đặc biệt cần áp dụng");
-    if (pendingEvent.move) {
-      const { teamId, move } = pendingEvent;
-      pendingEvent = null;
-      moveTeam(teamId, move);
-      showToast(`Đã áp dụng: ${move > 0 ? "+" : ""}${move} ô`);
-      return;
-    }
-    if (pendingEvent.title === "Mất lượt") {
-      state.skips[pendingEvent.teamId] = 1;
-      showToast(`${teamById(pendingEvent.teamId).name} mất lượt sau`);
-    } else {
-      showToast("Quản trò xử lý thử thách theo tình huống");
-    }
-    pendingEvent = null;
-    renderEvent();
-    saveState();
-    renderAll();
-  }
-
-  function answerWrong() {
-    showToast(`${teamById(state.activeTeam).name} đứng yên`);
-    nextTeam(false);
+    $("#questionTopic").textContent = "Câu hỏi trắc nghiệm";
+    $("#questionText").textContent = `Đến lượt ${teamById(state.activeTeam).name}. Quản trò bấm “Bốc câu hỏi”.`;
+    $("#diceCaption").textContent = "Đúng để tung xúc xắc";
+    if (skipped.length) showToast(`${skipped.join(", ")} bị mất lượt`);
+    else if (show) showToast(`Đến lượt ${teamById(state.activeTeam).name}`);
   }
 
   function updateTimer() {
@@ -263,6 +310,7 @@
 
   function resetTimer() {
     clearInterval(timerId);
+    timerId = null;
     remaining = Number($("#timeSelect").value);
     updateTimer();
   }
@@ -274,15 +322,18 @@
       updateTimer();
       if (remaining <= 0) {
         clearInterval(timerId);
+        timerId = null;
         showToast("Hết giờ!");
       }
     }, 1000);
   }
 
-  function requireAdmin(action) {
-    if (state.admin) return action();
-    openLogin();
-    showToast("Cần đăng nhập quản trò");
+  function openFinish(teamId) {
+    $("#winnerText").textContent = `${teamById(teamId).name} đã về đích!`;
+    $("#finishModal").classList.add("is-open");
+    $("#finishModal").setAttribute("aria-hidden", "false");
+    saveState();
+    renderAll();
   }
 
   function openLogin() {
@@ -305,28 +356,39 @@
     $("#adminOpenBtn").textContent = on ? "Đang quản trò" : "Quản trò";
   }
 
+  function requireAdmin(action) {
+    if (state.admin) return action();
+    openLogin();
+    showToast("Cần đăng nhập quản trò");
+    return undefined;
+  }
+
   function resetGame() {
     if (!confirm("Reset toàn bộ đường đua và câu hỏi đã dùng?")) return;
     Object.assign(state, freshState(), { admin: true });
     currentQuestion = null;
+    answered = false;
     pendingEvent = null;
+    busy = false;
+    $("#chanceModal").className = "chance-modal";
+    $("#chanceModal").setAttribute("aria-hidden", "true");
     $("#diceDisplay").textContent = "?";
+    $("#diceCaption").textContent = "Đúng để tung xúc xắc";
     $("#questionTopic").textContent = "Câu hỏi trắc nghiệm";
-    $("#questionText").textContent = "Quản trò chọn nhóm và bấm “Bốc câu hỏi”.";
-    $("#choices").innerHTML = "";
-    $("#answerLine").textContent = "Đáp án đúng sẽ hiện khi quản trò mở đáp án.";
-    $("#answerLine").classList.remove("show");
-    renderEvent();
-    renderAll();
-    saveState();
+    $("#questionText").textContent = "Quản trò đăng nhập, chọn nhóm và bấm “Bốc câu hỏi”.";
+    resetQuestionView();
     resetTimer();
+    saveState();
+    renderAll();
   }
 
   $("#adminOpenBtn").addEventListener("click", () => state.admin ? setAdmin(false) : openLogin());
   $("#closeLoginBtn").addEventListener("click", closeLogin);
-  $("#loginModal").addEventListener("click", e => { if (e.target.id === "loginModal") closeLogin(); });
-  $("#loginForm").addEventListener("submit", e => {
-    e.preventDefault();
+  $("#loginModal").addEventListener("click", event => {
+    if (event.target.id === "loginModal") closeLogin();
+  });
+  $("#loginForm").addEventListener("submit", event => {
+    event.preventDefault();
     if ($("#passwordInput").value === ADMIN_PASSWORD) {
       setAdmin(true);
       closeLogin();
@@ -335,26 +397,30 @@
       $("#loginError").classList.add("show");
     }
   });
-  $("#publicModeBtn").addEventListener("click", () => {
-    document.body.classList.toggle("public");
-    $("#publicModeBtn").textContent = document.body.classList.contains("public") ? "Thoát màn hình lớp" : "Màn hình lớp";
-  });
   $("#logoutBtn").addEventListener("click", () => setAdmin(false));
-  $("#teamSelect").addEventListener("change", () => { state.activeTeam = $("#teamSelect").value; saveState(); renderAll(); });
+  $("#teamSelect").addEventListener("change", () => {
+    state.activeTeam = $("#teamSelect").value;
+    currentQuestion = null;
+    resetQuestionView();
+    saveState();
+    renderAll();
+  });
   $("#drawQuestionBtn").addEventListener("click", () => requireAdmin(pickQuestion));
   $("#startTimerBtn").addEventListener("click", () => requireAdmin(startTimer));
-  $("#revealAnswerBtn").addEventListener("click", () => requireAdmin(revealAnswer));
-  $("#correctBtn").addEventListener("click", () => requireAdmin(rollDice));
-  $("#wrongBtn").addEventListener("click", () => requireAdmin(answerWrong));
-  $("#applyEventBtn").addEventListener("click", () => requireAdmin(applyEvent));
-  $("#manualForwardBtn").addEventListener("click", () => requireAdmin(() => moveTeam(state.activeTeam, 1)));
-  $("#manualBackBtn").addEventListener("click", () => requireAdmin(() => moveTeam(state.activeTeam, -1)));
+  $("#nextTeamBtn").addEventListener("click", () => requireAdmin(() => nextTeam()));
   $("#resetGameBtn").addEventListener("click", () => requireAdmin(resetGame));
-  $("#nextTeamBtn").addEventListener("click", () => requireAdmin(nextTeam));
   $("#timeSelect").addEventListener("change", resetTimer);
+  $("#choices").addEventListener("click", event => {
+    const button = event.target.closest(".choice");
+    if (button) chooseAnswer(button);
+  });
+  $("#closeChanceBtn").addEventListener("click", closeChanceAndApply);
+  $("#closeFinishBtn").addEventListener("click", () => {
+    $("#finishModal").classList.remove("is-open");
+    $("#finishModal").setAttribute("aria-hidden", "true");
+  });
 
   renderControls();
-  renderEvent();
   renderAll();
   updateTimer();
 })();
