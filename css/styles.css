@@ -10,18 +10,13 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 body{position:relative;font-family:var(--font);background:var(--night);color:var(--white);line-height:1.65;overflow-x:hidden}
-body::before{content:"";position:fixed;inset:0;z-index:-2;background:url("img/chu-tich-ho-chi-minh.jpg") center 18% / cover no-repeat;filter:saturate(.9) contrast(1.05)}
+body::before{content:"";position:fixed;inset:0;z-index:-2;background:url("../img/chu-tich-ho-chi-minh.jpg") center 18% / cover no-repeat;filter:saturate(.9) contrast(1.05)}
 body::after{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(16,13,11,.94),rgba(16,13,11,.62)),linear-gradient(180deg,rgba(16,13,11,.52),rgba(16,13,11,.96));pointer-events:none}
 img{display:block;max-width:100%;height:auto}a{color:inherit;text-decoration:none}button{font:inherit;color:inherit;border:0;background:transparent;cursor:pointer}
 ::selection{background:rgba(228,179,72,.28)}.container{width:min(1180px,calc(100% - 48px));margin-inline:auto}
 .scroll-progress{position:fixed;inset:0 auto auto 0;width:0;height:3px;z-index:9999;background:linear-gradient(90deg,var(--red),var(--gold),var(--teal))}
 #confettiCanvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:99999}
 @media(pointer:fine){html,body{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='24' viewBox='0 0 32 24'%3E%3Cline x1='4' y1='2' x2='4' y2='23' stroke='%23f6ecd0' stroke-width='2'/%3E%3Cpath d='M6 3 C13 0 18 6 28 3 L28 16 C19 19 14 12 6 16 Z' fill='%23d91f18'/%3E%3Ctext x='14' y='12' font-size='8' text-anchor='middle' dominant-baseline='middle' fill='%23ffdf4c'%3E%E2%98%85%3C/text%3E%3C/svg%3E") 4 3,auto}a,button,.flip-card,.carousel-item{cursor:pointer}}
-.flag-cursor{display:none}
-.flag-pole{position:absolute;left:4px;top:1px;width:2px;height:31px;background:linear-gradient(#f7f1df,#978d7f);border-radius:2px}
-.flag-cloth{position:absolute;left:7px;top:2px;width:32px;height:21px;background:#d91f18;border-radius:2px 8px 8px 2px;box-shadow:0 8px 18px rgba(0,0,0,.22);transform-origin:left center;animation:flagWave .95s ease-in-out infinite}
-.flag-cloth::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.18),transparent 34%,rgba(0,0,0,.12) 72%,transparent);border-radius:inherit}
-.flag-star{position:absolute;left:12px;top:2px;color:#ffdf4c;font-size:12px;line-height:1;z-index:1;text-shadow:0 1px 2px rgba(0,0,0,.12)}@keyframes flagWave{0%,100%{transform:skewY(-3deg) scaleX(1)}50%{transform:skewY(4deg) scaleX(.94)}}
 .label,.hero-chip{display:inline-flex;align-items:center;gap:8px;width:auto;max-width:100%;padding:7px 13px;border-radius:var(--pill);border:1px solid currentColor;color:var(--gold);background:rgba(228,179,72,.08);font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;line-height:1.35}
 .label{margin-bottom:18px}.label--light{color:var(--gold-2);background:rgba(255,255,255,.08);border-color:rgba(245,214,119,.42)}
 .section-title,.cq3-title{font-family:var(--display);font-weight:800;line-height:1.04;letter-spacing:0;text-wrap:balance}
