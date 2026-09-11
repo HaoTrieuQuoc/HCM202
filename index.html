@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chương 3 | Tư tưởng Hồ Chí Minh</title>
+  <meta name="description" content="Độc lập dân tộc gắn liền với chủ nghĩa xã hội — Tư tưởng Hồ Chí Minh">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- SCROLL PROGRESS BAR -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- CONFETTI CANVAS -->
+  <canvas id="confettiCanvas"></canvas>
+  <div class="flag-cursor" id="flagCursor" aria-hidden="true">
+    <span class="flag-pole"></span>
+    <span class="flag-cloth"><span class="flag-star">★</span></span>
+  </div>
+
+  <!-- NAV -->
+  <header class="nav" id="nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="#top">
+        <span class="nav-logo">HCM</span>
+        <span class="nav-title">Tư tưởng Hồ Chí Minh</span>
+      </a>
+      <nav class="nav-links" id="navLinks">
+        <a href="#showcase">Đất nước</a>
+        <a href="#independence">Độc lập</a>
+        <a href="#revolution">Cách mạng</a>
+        <a href="#socialism">CNXH</a>
+        <a href="#cq3">CQ3</a>
+      </nav>
+      <button class="nav-burger" id="navBurger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- ═══════════════════════════════════════
+         HERO
+         ═══════════════════════════════════════ -->
+    <section class="hero" id="hero">
+      <canvas class="hero-particles" id="heroParticles"></canvas>
+      <div class="hero-bg">
+        <img src="img/chu-tich-ho-chi-minh.jpg" alt="Chủ tịch Hồ Chí Minh" id="heroImg">
+      </div>
+      <div class="hero-gradient"></div>
+
+      <div class="hero-content">
+        <div class="hero-chip anim" data-delay="0">Chương 3 &middot; Tư tưởng Hồ Chí Minh</div>
+        <h1 class="hero-title">
+          <span class="title-line anim" data-delay="100">Độc lập dân tộc</span>
+          <span class="title-line anim" data-delay="200">gắn liền với</span>
+          <span class="title-line title-highlight anim" data-delay="300">Chủ nghĩa xã hội</span>
+        </h1>
+        <p class="hero-desc anim" data-delay="400">
+          <span class="typing-wrap"><span class="typing-text" id="typingText"></span><span class="typing-cursor">|</span></span>
+        </p>
+        <div class="hero-ctas anim" data-delay="500">
+          <a href="#cq3" class="cta cta-gold magnetic" data-strength="20">
+            <span>Trả lời CQ3</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+          <a href="#showcase" class="cta cta-glass magnetic" data-strength="15">
+            <span>Khám phá nội dung</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-counter anim" data-delay="600">
+        <div class="counter-item">
+          <span class="counter-num" data-target="2">0</span>
+          <span class="counter-label">Trục tư tưởng</span>
+        </div>
+        <div class="counter-divider"></div>
+        <div class="counter-item">
+          <span class="counter-num" data-target="5">0</span>
+          <span class="counter-label">Luận điểm</span>
+        </div>
+        <div class="counter-divider"></div>
+        <div class="counter-item">
+          <span class="counter-num" data-target="10">0</span>
+          <span class="counter-label">Ý cần nắm</span>
+        </div>
+      </div>
+
+      <div class="hero-scroll anim" data-delay="700">
+        <div class="scroll-line"></div>
+        <span>Scroll</span>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         SHOWCASE
+         ═══════════════════════════════════════ -->
+    <section class="showcase" id="showcase">
+      <div class="container">
+        <div class="showcase-header">
+          <span class="label anim">Tổng quan chương</span>
+          <h2 class="section-title word-reveal" data-text="Đi từ câu hỏi lớn đến câu trả lời gọn">Đi từ câu hỏi lớn<br>đến câu trả lời gọn</h2>
+          <p class="section-desc anim" data-delay="120">Chương 3 là một mạch lập luận liền mạch: độc lập là nền tảng, CNXH là hướng đi và là điều kiện để độc lập vững bền.</p>
+        </div>
+
+        <!-- IMAGE STORY -->
+        <div class="carousel-wrapper image-story anim" data-delay="160">
+          <div class="carousel" id="carousel">
+            <div class="carousel-item" data-index="0">
+              <img src="img/lang-bac-ho.jpg" alt="Lăng Chủ tịch Hồ Chí Minh" loading="lazy">
+              <div class="carousel-caption"><span class="carousel-num">01</span><span>Điểm tựa lịch sử</span></div>
+            </div>
+            <div class="carousel-item" data-index="1">
+              <img src="img/la-co-viet-nam.jpg" alt="Lá cờ Việt Nam" loading="lazy">
+              <div class="carousel-caption"><span class="carousel-num">02</span><span>Khát vọng độc lập</span></div>
+            </div>
+            <div class="carousel-item" data-index="2">
+              <img src="img/dong-ruong-co-viet-nam.jpg" alt="Đồng ruộng Việt Nam" loading="lazy">
+              <div class="carousel-caption"><span class="carousel-num">03</span><span>Đời sống nhân dân</span></div>
+            </div>
+            <div class="carousel-item" data-index="3">
+              <img src="img/xay-dung-dat-nuoc.jpg" alt="Xây dựng đất nước" loading="lazy">
+              <div class="carousel-caption"><span class="carousel-num">04</span><span>Xây dựng và kiến thiết</span></div>
+            </div>
+            <div class="carousel-item" data-index="4">
+              <img src="img/viet-nam-modern.jpg" alt="Việt Nam hiện đại" loading="lazy">
+              <div class="carousel-caption"><span class="carousel-num">05</span><span>Hiện đại hóa đất nước</span></div>
+            </div>
+          </div>
+          <div class="story-copy">
+            <span class="label label--light">Mạch hình ảnh</span>
+            <p>Từ ký ức lịch sử, biểu tượng độc lập, đời sống nhân dân đến công cuộc kiến thiết và hiện đại hóa.</p>
+          </div>
+          <div class="carousel-nav">
+            <button class="carousel-btn carousel-prev" id="carouselPrev" aria-label="Trước">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <div class="carousel-dots" id="carouselDots"></div>
+            <button class="carousel-btn carousel-next" id="carouselNext" aria-label="Sau">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 FLIP CARDS -->
+        <div class="flip-grid">
+          <div class="flip-card anim" data-delay="60">
+            <div class="flip-inner">
+              <div class="flip-front">
+                <span class="flip-num">01</span>
+                <h3>Độc lập dân tộc</h3>
+                <p>Nhấn để tìm hiểu</p>
+                <span class="flip-hint">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
+                </span>
+              </div>
+              <div class="flip-back">
+                <span class="flip-num">01</span>
+                <h3>Độc lập dân tộc</h3>
+                <p>Quyền thiêng liêng, bất khả xâm phạm; độc lập thực sự, hoàn toàn, gắn với thống nhất lãnh thổ và đời sống nhân dân.</p>
+                <span class="flip-hint">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="flip-card anim" data-delay="120">
+            <div class="flip-inner">
+              <div class="flip-front">
+                <span class="flip-num">02</span>
+                <h3>Cách mạng giải phóng</h3>
+                <p>Nhấn để tìm hiểu</p>
+                <span class="flip-hint">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
+                </span>
+              </div>
+              <div class="flip-back">
+                <span class="flip-num">02</span>
+                <h3>Cách mạng giải phóng</h3>
+                <p>Con đường cách mạng vô sản, sự lãnh đạo của Đảng, sức mạnh đại đoàn kết và tính chủ động sáng tạo.</p>
+                <span class="flip-hint">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="flip-card anim" data-delay="180">
+            <div class="flip-inner">
+              <div class="flip-front">
+                <span class="flip-num">03</span>
+                <h3>Chủ nghĩa xã hội</h3>
+                <p>Nhấn để tìm hiểu</p>
+                <span class="flip-hint">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
+                </span>
+              </div>
+              <div class="flip-back">
+                <span class="flip-num">03</span>
+                <h3>Chủ nghĩa xã hội</h3>
+                <p>Xã hội do nhân dân làm chủ, kinh tế phát triển, văn hóa — đạo đức tiến bộ và đời sống ngày càng tốt hơn.</p>
+                <span class="flip-hint">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="flip-card flip-card--accent anim" data-delay="240">
+            <div class="flip-inner">
+              <div class="flip-front">
+                <span class="flip-num">04</span>
+                <h3>Mối quan hệ hai chiều</h3>
+                <p>Nhấn để tìm hiểu</p>
+                <span class="flip-hint">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
+                </span>
+              </div>
+              <div class="flip-back">
+                <span class="flip-num">04</span>
+                <h3>Mối quan hệ hai chiều</h3>
+                <p>Độc lập là tiền đề tiến lên CNXH; CNXH là điều kiện bảo đảm độc lập có nội dung thực chất và vững chắc.</p>
+                <span class="flip-hint">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         TRỤC 1 — ĐỘC LẬP
+         ═══════════════════════════════════════ -->
+    <section class="independence" id="independence">
+      <div class="indep-layout">
+        <div class="indep-visual anim">
+          <div class="indep-img-wrap parallax-img" data-speed="0.3">
+            <img src="img/la-co-viet-nam.jpg" alt="Lá cờ Việt Nam tung bay" loading="lazy">
+          </div>
+          <div class="indep-quote glass-dark anim" data-delay="300">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V21z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
+            <blockquote>"Không có gì quý hơn độc lập tự do"</blockquote>
+            <cite>— Hồ Chí Minh</cite>
+          </div>
+        </div>
+
+        <div class="indep-content">
+          <span class="label anim">Trục 1 &middot; Độc lập dân tộc</span>
+          <h2 class="section-title word-reveal" data-text="Độc lập phải được đo bằng hạnh phúc của nhân dân">Độc lập phải được<br>đo bằng hạnh phúc<br>của nhân dân</h2>
+
+          <div class="feature-stack">
+            <article class="feature-row anim" data-delay="100">
+              <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+              <div>
+                <span class="feature-tag">Quyền dân tộc</span>
+                <h3>Thiêng liêng và bất khả xâm phạm</h3>
+                <p>Mỗi dân tộc đều có quyền sống, quyền sung sướng và quyền tự do.</p>
+              </div>
+            </article>
+            <article class="feature-row anim" data-delay="180">
+              <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+              <div>
+                <span class="feature-tag">Giá trị thực chất</span>
+                <h3>Gắn với tự do, ấm no, hạnh phúc</h3>
+                <p>Nền độc lập chỉ trọn nghĩa khi người dân được hưởng thành quả.</p>
+              </div>
+            </article>
+            <article class="feature-row anim" data-delay="260">
+              <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+              <div>
+                <span class="feature-tag">Chủ quyền đầy đủ</span>
+                <h3>Hoàn toàn và triệt để</h3>
+                <p>Tự quyết về chính quyền, đối nội, đối ngoại, quân sự, kinh tế.</p>
+              </div>
+            </article>
+            <article class="feature-row anim" data-delay="340">
+              <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+              <div>
+                <span class="feature-tag">Thống nhất</span>
+                <h3>Toàn vẹn lãnh thổ</h3>
+                <p>Độc lập gắn liền mục tiêu non sông thống nhất, Bắc — Nam sum họp.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         5 LUẬN ĐIỂM — INTERACTIVE TIMELINE
+         ═══════════════════════════════════════ -->
+    <section class="revolution" id="revolution">
+      <div class="rev-bg">
+        <img src="img/lang-bac-ho.jpg" alt="Lăng Bác" loading="lazy">
+      </div>
+      <div class="rev-overlay"></div>
+      <div class="container">
+        <div class="rev-header">
+          <span class="label label--light anim">Năm luận điểm 3.1.2</span>
+          <h2 class="section-title section-title--light word-reveal" data-text="Con đường để giành độc lập">Con đường để giành<br>độc lập</h2>
+        </div>
+
+        <!-- INTERACTIVE TIMELINE -->
+        <div class="timeline-wrap anim" data-delay="100">
+          <div class="timeline-progress" id="timelineProgress"></div>
+          <div class="timeline">
+            <div class="tl-item" data-step="1">
+              <div class="tl-dot"><span>01</span></div>
+              <div class="tl-content">
+                <h3>Đi theo con đường<br>cách mạng vô sản</h3>
+                <p>Chọn con đường đúng đắn, phù hợp với điều kiện lịch sử Việt Nam</p>
+              </div>
+            </div>
+            <div class="tl-item" data-step="2">
+              <div class="tl-dot"><span>02</span></div>
+              <div class="tl-content">
+                <h3>Có Đảng Cộng sản<br>lãnh đạo</h3>
+                <p>Tổ chức tiên phong với đường lối đúng đắn, vững vàng</p>
+              </div>
+            </div>
+            <div class="tl-item" data-step="3">
+              <div class="tl-dot"><span>03</span></div>
+              <div class="tl-content">
+                <h3>Dựa trên đại đoàn kết<br>toàn dân tộc</h3>
+                <p>Sức mạnh nhân dân, lấy công — nông làm nền tảng</p>
+              </div>
+            </div>
+            <div class="tl-item" data-step="4">
+              <div class="tl-dot"><span>04</span></div>
+              <div class="tl-content">
+                <h3>Chủ động, sáng tạo,<br>tự lực cánh sinh</h3>
+                <p>Không ỷ lại, chủ động thích ứng mọi hoàn cảnh</p>
+              </div>
+            </div>
+            <div class="tl-item" data-step="5">
+              <div class="tl-dot"><span>05</span></div>
+              <div class="tl-content">
+                <h3>Kết hợp đấu tranh<br>chính trị — vũ trang</h3>
+                <p>Phù hợp từng giai đoạn, khi cần dùng bạo lực cách mạng</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         TRỤC 2 — CNXH
+         ═══════════════════════════════════════ -->
+    <section class="socialism" id="socialism">
+      <div class="container">
+        <div class="soc-header">
+          <span class="label anim">Trục 2 &middot; Chủ nghĩa xã hội</span>
+          <h2 class="section-title word-reveal" data-text="CNXH được nhìn từ đời sống con người">CNXH được nhìn từ<br>đời sống con người</h2>
+          <p class="section-desc anim" data-delay="120">Nội dung cốt lõi không ở tên gọi hình thức, mà ở việc nhân dân làm chủ, đất nước phát triển và con người được giải phóng.</p>
+        </div>
+
+        <!-- REVEAL IMAGES -->
+        <div class="reveal-pair">
+          <div class="reveal-img reveal-img--build anim" data-delay="100">
+            <div class="reveal-img-inner">
+              <img src="img/xay-dung-dat-nuoc.jpg" alt="Xây dựng đất nước" loading="lazy">
+            </div>
+            <div class="reveal-label">
+              <span class="reveal-dot"></span>Xây dựng &amp; phát triển
+            </div>
+          </div>
+          <div class="reveal-img reveal-img--people anim" data-delay="200">
+            <div class="reveal-img-inner">
+              <img src="img/dong-ruong-co-viet-nam.jpg" alt="Đồng ruộng Việt Nam" loading="lazy">
+            </div>
+            <div class="reveal-label">
+              <span class="reveal-dot"></span>Nhân dân lao động
+            </div>
+          </div>
+          <div class="reveal-img reveal-img--wide reveal-img--modern anim" data-delay="300">
+            <div class="reveal-img-inner">
+              <img src="img/viet-nam-modern.jpg" alt="Việt Nam hiện đại" loading="lazy">
+            </div>
+            <div class="reveal-label">
+              <span class="reveal-dot"></span>Việt Nam hiện đại
+            </div>
+          </div>
+        </div>
+
+        <!-- 3D TILT CARDS -->
+        <div class="soc-cards">
+          <article class="soc-card tilt-card" data-tilt>
+            <div class="soc-card-shine"></div>
+            <div class="soc-card-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+            <h3>Nhân dân làm chủ</h3>
+            <p>Dân chủ là động lực và mục tiêu, kết hợp quyền với trách nhiệm và kỷ cương.</p>
+          </article>
+          <article class="soc-card tilt-card" data-tilt>
+            <div class="soc-card-shine"></div>
+            <div class="soc-card-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+            <h3>Kinh tế phát triển</h3>
+            <p>Xây dựng cơ sở vật chất — kỹ thuật để đất nước thoát nghèo nàn, lạc hậu.</p>
+          </article>
+          <article class="soc-card tilt-card" data-tilt>
+            <div class="soc-card-shine"></div>
+            <div class="soc-card-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+            <h3>Văn hóa tiến bộ</h3>
+            <p>Bồi dưỡng đạo đức, con người mới và đời sống tinh thần lành mạnh.</p>
+          </article>
+          <article class="soc-card tilt-card" data-tilt>
+            <div class="soc-card-shine"></div>
+            <div class="soc-card-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+            <h3>Xây đi đôi với chống</h3>
+            <p>Phát huy động lực, đồng thời ngăn suy thoái, tham nhũng, lãng phí.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         CQ3
+         ═══════════════════════════════════════ -->
+    <section class="cq3" id="cq3">
+      <div class="cq3-bg">
+        <img src="img/la-co-viet-nam-bay-phap-phoi.jpg" alt="Cờ đỏ sao vàng" loading="lazy">
+      </div>
+      <div class="cq3-overlay"></div>
+      <div class="container">
+        <div class="cq3-card anim">
+          <span class="label label--light">Trọng tâm CQ3</span>
+          <h2 class="cq3-title">CNXH là mục đích<br>hay công cụ?</h2>
+          <p class="cq3-answer">
+            Cách trả lời cân bằng: chủ nghĩa xã hội là <strong>mục tiêu chiến lược</strong>
+            của cách mạng Việt Nam sau khi giành độc lập, đồng thời là
+            <strong>con đường và điều kiện</strong> để bảo đảm độc lập bền vững.
+          </p>
+
+          <!-- INTERACTIVE COMPARE -->
+          <div class="compare-wrap">
+            <div class="compare-col compare-left">
+              <div class="compare-badge">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Mục tiêu chiến lược
+              </div>
+              <p>Cách mạng không dừng lại ở việc giành chính quyền; sau độc lập phải tiếp tục xây dựng xã hội mới với dân chủ, công bằng, văn minh.</p>
+              <div class="compare-bar"><div class="compare-fill" data-width="95"></div></div>
+              <span class="compare-pct">95% tầm quan trọng</span>
+            </div>
+            <div class="compare-divider">
+              <div class="compare-vs">VS</div>
+            </div>
+            <div class="compare-col compare-right">
+              <div class="compare-badge">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Điều kiện bảo đảm
+              </div>
+              <p>CNXH làm cho độc lập có nội dung thực chất: dân làm chủ, đời sống tốt hơn, sức mạnh quốc gia vững bền.</p>
+              <div class="compare-bar"><div class="compare-fill" data-width="90"></div></div>
+              <span class="compare-pct">90% tầm quan trọng</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         ÔN TẬP — QUIZ
+         ═══════════════════════════════════════ -->
+    <section class="review" id="review">
+      <div class="container">
+        <div class="review-header">
+          <span class="label anim">Ôn tập nhanh</span>
+          <h2 class="section-title word-reveal" data-text="10 ý bắt buộc phải nắm">10 ý bắt buộc phải nắm</h2>
+          <p class="section-desc anim" data-delay="120">Nhấn vào để đánh dấu bạn đã thuộc lòng. Hoàn thành tất cả để ăn mừng!</p>
+        </div>
+
+        <!-- SCORE RING -->
+        <div class="score-ring-wrap anim" data-delay="160">
+          <div class="score-ring" id="scoreRing">
+            <svg viewBox="0 0 120 120">
+              <circle class="ring-bg" cx="60" cy="60" r="52"/>
+              <circle class="ring-fill" id="ringFill" cx="60" cy="60" r="52"/>
+            </svg>
+            <div class="score-num" id="scoreNum">0</div>
+            <div class="score-label">/ 10</div>
+          </div>
+        </div>
+
+        <div class="review-grid">
+          <button class="rv-btn anim" data-delay="30" data-idx="1">Độc lập, tự do là quyền thiêng liêng của mọi dân tộc.</button>
+          <button class="rv-btn anim" data-delay="60" data-idx="2">Độc lập phải gắn với tự do và hạnh phúc của nhân dân.</button>
+          <button class="rv-btn anim" data-delay="90" data-idx="3">Độc lập phải thực sự, hoàn toàn, triệt để.</button>
+          <button class="rv-btn anim" data-delay="120" data-idx="4">Độc lập gắn với thống nhất và toàn vẹn lãnh thổ.</button>
+          <button class="rv-btn anim" data-delay="150" data-idx="5">Giải phóng dân tộc phải theo con đường cách mạng vô sản.</button>
+          <button class="rv-btn anim" data-delay="180" data-idx="6">Cách mạng cần Đảng lãnh đạo và là sự nghiệp của quần chúng.</button>
+          <button class="rv-btn anim" data-delay="210" data-idx="7">Đại đoàn kết toàn dân, lấy công — nông làm nền tảng.</button>
+          <button class="rv-btn anim" data-delay="240" data-idx="8">Cách mạng thuộc địa phải chủ động, sáng tạo.</button>
+          <button class="rv-btn anim" data-delay="270" data-idx="9">CNXH phải thể hiện bằng quyền làm chủ và đời sống tốt hơn.</button>
+          <button class="rv-btn anim" data-delay="300" data-idx="10">Độc lập là tiền đề; CNXH bảo đảm độc lập bền vững.</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-left">
+        <strong>Chương 3 &middot; Tư tưởng Hồ Chí Minh</strong>
+        <span>Nội dung trích từ tài liệu học</span>
+      </div>
+      <a href="#top" class="footer-top magnetic" data-strength="10">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+        Lên đầu trang
+      </a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
