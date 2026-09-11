@@ -149,6 +149,7 @@
   function resetQuestionView() {
     answered = false;
     $(".quiz-dock").classList.remove("is-open");
+    $(".board-zone").classList.remove("question-active");
     $("#choices").innerHTML = "";
     $("#answerLine").className = "answer-line";
     $("#answerLine").textContent = "Chọn đáp án để biết đúng/sai.";
@@ -156,6 +157,7 @@
 
   function closeQuestionOverlay() {
     $(".quiz-dock").classList.remove("is-open");
+    $(".board-zone").classList.remove("question-active");
   }
 
   function pickQuestion() {
@@ -171,6 +173,7 @@
     $("#questionText").textContent = currentQuestion.q;
     $("#choices").innerHTML = currentQuestion.choices.map((choice, i) => `<button class="choice" data-letter="${letters[i]}" data-index="${i}">${choice}</button>`).join("");
     $("#diceCaption").textContent = `${teamById(state.activeTeam).name} chọn đáp án`;
+    $(".board-zone").classList.add("question-active");
     $(".quiz-dock").classList.add("is-open");
     saveState();
     resetTimer();
