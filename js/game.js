@@ -15,14 +15,19 @@
   const specialTiles = {
     4: { kind: "lucky", icon: "+", title: "Gió thuận", text: "Tiến thêm 2 ô vì nắm chắc ý chính.", move: 2 },
     7: { kind: "trap", icon: "!", title: "Chông gai", text: "Lùi 2 ô vì lập luận còn thiếu dẫn chứng.", move: -2 },
-    10: { kind: "challenge", icon: "?", title: "Câu hỏi phụ", text: "Quản trò hỏi thêm một ý ngắn. Đóng lá thăm để chuyển lượt.", move: 0 },
+    10: { kind: "challenge", icon: "?", title: "Bốc thăm bí mật", text: "Chọn 1 trong 3 lá bài để biết nhóm được tiến hay phải lùi.", move: 0 },
     13: { kind: "lucky", icon: "+", title: "Đại đoàn kết", text: "Cả lớp cổ vũ. Nhóm được tiến thêm 1 ô.", move: 1 },
     16: { kind: "trap", icon: "!", title: "Mất nhịp", text: "Lượt sau nhóm bị bỏ qua một lần.", skip: 1 },
     19: { kind: "lucky", icon: "+", title: "Tự lực cánh sinh", text: "Tiến thêm 3 ô nhờ xử lý câu hỏi tự tin.", move: 3 },
-    22: { kind: "challenge", icon: "?", title: "CQ3 bất ngờ", text: "Giải thích nhanh: Chủ nghĩa xã hội là mục đích hay con đường bảo đảm độc lập?", move: 0 },
+    22: { kind: "challenge", icon: "?", title: "Bốc thăm bí mật", text: "Chọn 1 trong 3 lá bài để biết nhóm được tiến hay phải lùi.", move: 0 },
     25: { kind: "trap", icon: "!", title: "Lạc hướng", text: "Lùi 3 ô vì nhầm giữa độc lập hình thức và độc lập thực chất.", move: -3 },
     28: { kind: "lucky", icon: "+", title: "Bứt phá", text: "Tiến thêm 1 ô trước vạch đích.", move: 1 }
   };
+  const mysteryCards = [
+    { move: 7, title: "May mắn lớn", text: "Được đi thêm 7 bước.", tone: "forward" },
+    { move: -7, title: "Chông gai lớn", text: "Bị lùi 7 bước.", tone: "back" },
+    { move: 3, title: "Bứt tốc", text: "Được tiến thêm 3 bước.", tone: "forward" }
+  ];
   const questions = [
     { topic: "Độc lập dân tộc", q: "Theo Hồ Chí Minh, độc lập dân tộc trước hết là gì?", choices: ["Một khẩu hiệu chính trị", "Quyền thiêng liêng, bất khả xâm phạm của dân tộc", "Một mục tiêu kinh tế ngắn hạn", "Một hình thức ngoại giao"], correct: 1 },
     { topic: "Độc lập thực chất", q: "Nền độc lập chỉ trọn nghĩa khi gắn với điều gì?", choices: ["Tự do, ấm no, hạnh phúc của nhân dân", "Quân đội thật đông", "Đóng cửa với thế giới", "Chỉ có chính quyền trung ương"], correct: 0 },
@@ -257,11 +262,11 @@
     const direction = delta >= 0 ? 1 : -1;
     for (let step = 0; step < Math.abs(delta); step += 1) {
       state.positions[teamId] = Math.max(0, Math.min(FINISH, state.positions[teamId] + direction));
-      renderAll(state.positions[teamId]);
-      saveState();
-      await wait(250);
+      renderTrack(state.positions[teamId]);
+      await wait(190);
       if (state.positions[teamId] === FINISH) break;
     }
+    saveState();
     if (state.positions[teamId] >= FINISH && !state.winner) {
       state.winner = teamId;
       openFinish(teamId);
@@ -286,15 +291,60 @@
   function openChanceModal(event) {
     const labels = { lucky: "May mắn", trap: "Chông gai", challenge: "Thử thách" };
     const modal = $("#chanceModal");
+    const closeButton = $("#closeChanceBtn");
+    const drawCards = $("#drawCards");
     modal.className = `chance-modal is-open ${event.kind}`;
     modal.setAttribute("aria-hidden", "false");
     $("#eventKind").textContent = `${teamById(event.teamId).name} - ${labels[event.kind] || "Ô đặc biệt"}`;
     $("#eventTitle").textContent = event.title;
     $("#eventText").textContent = event.text;
+    drawCards.innerHTML = "";
+    closeButton.disabled = false;
+    closeButton.textContent = "Đóng và áp dụng";
+    if (event.kind === "challenge") {
+      pendingEvent.cardChosen = false;
+      closeButton.disabled = true;
+      closeButton.textContent = "Chọn 1 lá bài";
+      shuffleCards(mysteryCards).forEach((card, index) => {
+        const button = document.createElement("button");
+        button.className = "mystery-card";
+        button.type = "button";
+        button.dataset.move = card.move;
+        button.dataset.title = card.title;
+        button.dataset.text = card.text;
+        button.dataset.tone = card.tone;
+        button.innerHTML = `<span>?</span><strong>Lá ${index + 1}</strong>`;
+        drawCards.appendChild(button);
+      });
+    }
+  }
+
+  function shuffleCards(cards) {
+    return [...cards].sort(() => Math.random() - 0.5);
+  }
+
+  function pickMysteryCard(button) {
+    if (!pendingEvent || pendingEvent.kind !== "challenge" || pendingEvent.cardChosen) return;
+    const move = Number(button.dataset.move);
+    pendingEvent.move = move;
+    pendingEvent.title = button.dataset.title;
+    pendingEvent.text = button.dataset.text;
+    pendingEvent.cardChosen = true;
+    $("#eventTitle").textContent = button.dataset.title;
+    $("#eventText").textContent = button.dataset.text;
+    $$(".mystery-card").forEach(card => {
+      card.disabled = true;
+      card.classList.add(card === button ? "is-picked" : "is-muted");
+    });
+    button.classList.add(button.dataset.tone);
+    button.innerHTML = `<span>${move > 0 ? "+" : ""}${move}</span><strong>${button.dataset.title}</strong>`;
+    $("#closeChanceBtn").disabled = false;
+    $("#closeChanceBtn").textContent = "Đóng và áp dụng";
   }
 
   async function closeChanceAndApply() {
     if (busy || !pendingEvent) return;
+    if (pendingEvent.kind === "challenge" && !pendingEvent.cardChosen) return showToast("Hãy chọn 1 lá bài trước");
     const event = pendingEvent;
     pendingEvent = null;
     $("#chanceModal").className = "chance-modal";
@@ -451,6 +501,10 @@
   $("#choices").addEventListener("click", event => {
     const button = event.target.closest(".choice");
     if (button) chooseAnswer(button);
+  });
+  $("#drawCards").addEventListener("click", event => {
+    const button = event.target.closest(".mystery-card");
+    if (button) pickMysteryCard(button);
   });
   $("#closeChanceBtn").addEventListener("click", closeChanceAndApply);
   $("#closeFinishBtn").addEventListener("click", () => {
