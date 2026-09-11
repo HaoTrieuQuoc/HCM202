@@ -148,9 +148,14 @@
 
   function resetQuestionView() {
     answered = false;
+    $(".quiz-dock").classList.remove("is-open");
     $("#choices").innerHTML = "";
     $("#answerLine").className = "answer-line";
     $("#answerLine").textContent = "Chọn đáp án để biết đúng/sai.";
+  }
+
+  function closeQuestionOverlay() {
+    $(".quiz-dock").classList.remove("is-open");
   }
 
   function pickQuestion() {
@@ -166,6 +171,7 @@
     $("#questionText").textContent = currentQuestion.q;
     $("#choices").innerHTML = currentQuestion.choices.map((choice, i) => `<button class="choice" data-letter="${letters[i]}" data-index="${i}">${choice}</button>`).join("");
     $("#diceCaption").textContent = `${teamById(state.activeTeam).name} chọn đáp án`;
+    $(".quiz-dock").classList.add("is-open");
     saveState();
     resetTimer();
   }
@@ -185,32 +191,60 @@
       correctButton?.classList.add("correct-choice");
       $("#answerLine").className = "answer-line wrong";
       $("#answerLine").textContent = `Sai rồi. Đáp án đúng là ${letters[currentQuestion.correct]}: ${currentQuestion.choices[currentQuestion.correct]}.`;
-      showToast(`${teamById(state.activeTeam).name} đứng yên`);
-      await wait(1800);
+      await wait(700);
+      closeQuestionOverlay();
+      await showResultModal("wrong", "Bạn đã trả lời sai, chúng ta không được đi tiếp.", false, 1900);
+      hideResultModal();
       nextTeam(false);
       return;
     }
     button.classList.add("correct-choice");
     $("#answerLine").className = "answer-line correct";
-    $("#answerLine").textContent = "Đúng! Xúc xắc đang lăn...";
-    await wait(450);
+    $("#answerLine").textContent = "Bạn đã trả lời đúng! Bắt đầu tung xúc xắc...";
+    await wait(800);
+    closeQuestionOverlay();
     await rollDice();
+  }
+
+  async function showResultModal(type, text, withDice, duration = 900) {
+    const modal = $("#resultModal");
+    modal.className = `result-modal is-open ${type} ${withDice ? "with-dice" : ""}`;
+    modal.setAttribute("aria-hidden", "false");
+    $("#resultText").textContent = text;
+    $("#resultDice").textContent = "?";
+    $("#resultDice").classList.remove("rolling");
+    await wait(duration);
+  }
+
+  function hideResultModal() {
+    $("#resultModal").className = "result-modal";
+    $("#resultModal").setAttribute("aria-hidden", "true");
+    $("#resultDice").classList.remove("rolling");
   }
 
   async function rollDice() {
     if (busy || state.winner) return;
     busy = true;
     const dice = $("#diceDisplay");
+    const resultDice = $("#resultDice");
+    await showResultModal("correct", "Bạn đã trả lời đúng! Bắt đầu tung xúc xắc...", true, 850);
     dice.classList.add("rolling");
+    resultDice.classList.add("rolling");
     $("#diceCaption").textContent = "Đang tung...";
     for (let i = 0; i < 14; i += 1) {
-      dice.textContent = Math.floor(Math.random() * 6) + 1;
+      const flash = Math.floor(Math.random() * 6) + 1;
+      dice.textContent = flash;
+      resultDice.textContent = flash;
       await wait(58);
     }
     const value = Math.floor(Math.random() * 6) + 1;
     dice.textContent = value;
+    resultDice.textContent = value;
     dice.classList.remove("rolling");
+    resultDice.classList.remove("rolling");
     $("#diceCaption").textContent = `Đi ${value} ô`;
+    await wait(650);
+    hideResultModal();
     await animateMoveTeam(state.activeTeam, value, true);
     busy = false;
     afterMove(state.activeTeam);
@@ -372,6 +406,7 @@
     busy = false;
     $("#chanceModal").className = "chance-modal";
     $("#chanceModal").setAttribute("aria-hidden", "true");
+    hideResultModal();
     $("#diceDisplay").textContent = "?";
     $("#diceCaption").textContent = "Đúng để tung xúc xắc";
     $("#questionTopic").textContent = "Câu hỏi trắc nghiệm";
