@@ -49,7 +49,7 @@ h1{margin-top:9px;font-size:clamp(26px,3vw,44px);line-height:1.02;letter-spacing
 .dice.rolling{animation:diceRoll .12s linear infinite}
 @keyframes diceRoll{50%{transform:rotate(12deg) scale(1.08)}100%{transform:rotate(-10deg) scale(.98)}}
 .quiz-dock{display:grid;grid-template-columns:minmax(240px,.72fr) minmax(420px,1fr) 260px;gap:12px;align-items:stretch;padding:12px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,rgba(255,247,232,.08),rgba(240,192,77,.08))}
-.quiz-dock.is-open{position:absolute;left:12px;right:12px;top:96px;bottom:12px;z-index:20;grid-template-columns:1fr;grid-template-rows:auto auto 1fr auto;align-content:center;padding:30px;background:#241b15;border:1px solid rgba(240,192,77,.62);border-radius:var(--radius);box-shadow:0 18px 42px rgba(0,0,0,.36);animation:questionIn .22s var(--ease)}
+.quiz-dock.is-open{position:absolute;left:12px;right:12px;top:96px;bottom:12px;z-index:20;grid-template-columns:1fr;grid-template-rows:auto auto 1fr auto;align-content:center;padding:30px;background:#000;border:1px solid rgba(240,192,77,.62);border-radius:var(--radius);box-shadow:0 18px 42px rgba(0,0,0,.36);animation:questionIn .22s var(--ease)}
 @keyframes questionIn{from{opacity:.2;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
 .quiz-head{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0}
 .timer{display:grid;place-items:center;flex:0 0 auto;width:52px;height:52px;border-radius:50%;background:rgba(240,192,77,.14);border:1px solid rgba(240,192,77,.46);color:#ffe08a;font-size:23px;font-weight:1000}
@@ -60,8 +60,8 @@ h1{margin-top:9px;font-size:clamp(26px,3vw,44px);line-height:1.02;letter-spacing
 .choices{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .quiz-dock.is-open .choices{align-self:center;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .choice{position:relative;min-height:48px;padding:9px 10px 9px 39px;border-radius:var(--radius);border:1px solid var(--line);background:rgba(255,247,232,.1);color:var(--paper);font-size:14px;font-weight:850;text-align:left;transition:transform .18s var(--ease),background .18s,border-color .18s}
-.quiz-dock.is-open .choice{min-height:96px;padding:22px 24px 22px 76px;background:#3a3028;border-color:rgba(255,247,232,.28);font-size:clamp(18px,1.8vw,28px);box-shadow:none}
-.quiz-dock.is-open .choice:hover{background:#463a31}
+.quiz-dock.is-open .choice{min-height:96px;padding:22px 24px 22px 76px;background:#000;border-color:rgba(255,247,232,.38);font-size:clamp(18px,1.8vw,28px);box-shadow:none}
+.quiz-dock.is-open .choice:hover{background:#111}
 .choice:hover{transform:translateY(-2px);background:rgba(255,247,232,.15)}
 .choice::before{content:attr(data-letter);position:absolute;left:10px;top:10px;display:grid;place-items:center;width:23px;height:23px;border-radius:50%;background:var(--gold);color:var(--ink);font-size:12px;font-weight:1000}
 .quiz-dock.is-open .choice::before{left:22px;top:24px;width:38px;height:38px;font-size:18px}
@@ -132,7 +132,7 @@ h1{margin-top:9px;font-size:clamp(26px,3vw,44px);line-height:1.02;letter-spacing
 .chance-back h2{font-size:34px;line-height:1.05}
 .chance-back p{color:#574b42;font-size:18px;font-weight:750}
 .chance-back .gold-btn{align-self:end;justify-self:end}
-.draw-cards{display:none;width:100%;grid-template-columns:repeat(3,1fr);gap:12px;margin:8px 0 4px}
+.draw-cards{display:none;width:100%;grid-template-columns:repeat(4,1fr);gap:12px;margin:8px 0 4px}
 .chance-modal.challenge .draw-cards{display:grid}
 .mystery-card{display:grid;place-items:center;min-height:138px;padding:16px;border-radius:var(--radius);border:2px solid rgba(23,17,13,.12);background:repeating-linear-gradient(45deg,#bd2620 0 10px,#d53830 10px 20px);color:#fff7e8;font-weight:1000;text-align:center;transition:transform .18s var(--ease),background .18s}
 .mystery-card:hover{transform:translateY(-3px)}

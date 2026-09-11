@@ -3,7 +3,8 @@
 
   const ADMIN_PASSWORD = "3108";
   const FINISH = 30;
-  const STORAGE_KEY = "hcmRaceV3State";
+  const STORAGE_KEY = "hcmRaceV4State";
+  const QUESTION_SECONDS = 30;
   const letters = ["A", "B", "C", "D"];
   const teams = [
     { id: "team-1", name: "Nhóm 1", short: "1" },
@@ -13,20 +14,21 @@
     { id: "team-6", name: "Nhóm 6", short: "6" }
   ];
   const specialTiles = {
-    4: { kind: "lucky", icon: "+", title: "Gió thuận", text: "Tiến thêm 2 ô vì nắm chắc ý chính.", move: 2 },
-    7: { kind: "trap", icon: "!", title: "Chông gai", text: "Lùi 2 ô vì lập luận còn thiếu dẫn chứng.", move: -2 },
-    10: { kind: "challenge", icon: "?", title: "Bốc thăm bí mật", text: "Chọn 1 trong 3 lá bài để biết nhóm được tiến hay phải lùi.", move: 0 },
-    13: { kind: "lucky", icon: "+", title: "Đại đoàn kết", text: "Cả lớp cổ vũ. Nhóm được tiến thêm 1 ô.", move: 1 },
-    16: { kind: "trap", icon: "!", title: "Mất nhịp", text: "Lượt sau nhóm bị bỏ qua một lần.", skip: 1 },
-    19: { kind: "lucky", icon: "+", title: "Tự lực cánh sinh", text: "Tiến thêm 3 ô nhờ xử lý câu hỏi tự tin.", move: 3 },
-    22: { kind: "challenge", icon: "?", title: "Bốc thăm bí mật", text: "Chọn 1 trong 3 lá bài để biết nhóm được tiến hay phải lùi.", move: 0 },
-    25: { kind: "trap", icon: "!", title: "Lạc hướng", text: "Lùi 3 ô vì nhầm giữa độc lập hình thức và độc lập thực chất.", move: -3 },
-    28: { kind: "lucky", icon: "+", title: "Bứt phá", text: "Tiến thêm 1 ô trước vạch đích.", move: 1 }
+    4: { kind: "lucky", icon: "+", title: "Ô dấu +", text: "Đóng lá thăm để tung xúc xắc. Ra số nào thì đi thêm bấy nhiêu bước.", diceEffect: "forward" },
+    7: { kind: "trap", icon: "-", title: "Ô dấu -", text: "Đóng lá thăm để tung xúc xắc. Ra số nào thì lùi bấy nhiêu bước.", diceEffect: "back" },
+    10: { kind: "challenge", icon: "?", title: "Bốc thăm bí mật", text: "Chọn 1 trong 4 lá bài để biết điều gì xảy ra.", move: 0 },
+    13: { kind: "lucky", icon: "+", title: "Ô dấu +", text: "Đóng lá thăm để tung xúc xắc. Ra số nào thì đi thêm bấy nhiêu bước.", diceEffect: "forward" },
+    16: { kind: "trap", icon: "-", title: "Ô dấu -", text: "Đóng lá thăm để tung xúc xắc. Ra số nào thì lùi bấy nhiêu bước.", diceEffect: "back" },
+    19: { kind: "lucky", icon: "+", title: "Ô dấu +", text: "Đóng lá thăm để tung xúc xắc. Ra số nào thì đi thêm bấy nhiêu bước.", diceEffect: "forward" },
+    22: { kind: "challenge", icon: "?", title: "Bốc thăm bí mật", text: "Chọn 1 trong 4 lá bài để biết điều gì xảy ra.", move: 0 },
+    25: { kind: "trap", icon: "-", title: "Ô dấu -", text: "Đóng lá thăm để tung xúc xắc. Ra số nào thì lùi bấy nhiêu bước.", diceEffect: "back" },
+    28: { kind: "lucky", icon: "+", title: "Ô dấu +", text: "Đóng lá thăm để tung xúc xắc. Ra số nào thì đi thêm bấy nhiêu bước.", diceEffect: "forward" }
   };
   const mysteryCards = [
-    { move: 7, title: "May mắn lớn", text: "Được đi thêm 7 bước.", tone: "forward" },
-    { move: -7, title: "Chông gai lớn", text: "Bị lùi 7 bước.", tone: "back" },
-    { move: 3, title: "Bứt tốc", text: "Được tiến thêm 3 bước.", tone: "forward" }
+    { action: "move", move: 7, title: "May mắn lớn", text: "Được đi thêm 7 bước.", tone: "forward" },
+    { action: "move", move: -7, title: "Chông gai lớn", text: "Đi lùi 7 bước.", tone: "back" },
+    { action: "allOpponentsBack", move: -3, title: "Đẩy lùi đối thủ", text: "Toàn bộ đối thủ bị lùi 3 bước.", tone: "back" },
+    { action: "nearestMinus", title: "Trượt về ô âm", text: "Đi tới ô dấu - gần nhất.", tone: "back" }
   ];
   const questions = [
     { topic: "Độc lập dân tộc", q: "Theo Hồ Chí Minh, độc lập dân tộc trước hết là gì?", choices: ["Một khẩu hiệu chính trị", "Quyền thiêng liêng, bất khả xâm phạm của dân tộc", "Một mục tiêu kinh tế ngắn hạn", "Một hình thức ngoại giao"], correct: 1 },
@@ -60,7 +62,7 @@
   let busy = false;
   let pendingEvent = null;
   let timerId = null;
-  let remaining = Number($("#timeSelect")?.value || 45);
+  let remaining = QUESTION_SECONDS;
 
   function freshState() {
     return {
@@ -181,7 +183,7 @@
     $(".board-zone").classList.add("question-active");
     $(".quiz-dock").classList.add("is-open");
     saveState();
-    resetTimer();
+    startQuestionTimer();
   }
 
   function setChoicesLocked() {
@@ -191,6 +193,8 @@
   async function chooseAnswer(button) {
     if (!currentQuestion || answered || busy) return;
     answered = true;
+    clearInterval(timerId);
+    timerId = null;
     setChoicesLocked();
     const index = Number(button.dataset.index);
     const correctButton = $(`.choice[data-index="${currentQuestion.correct}"]`);
@@ -279,6 +283,19 @@
     renderAll(state.positions[teamId]);
   }
 
+  async function animateMoveTeams(teamIds, delta) {
+    const direction = delta >= 0 ? 1 : -1;
+    for (let step = 0; step < Math.abs(delta); step += 1) {
+      teamIds.forEach(teamId => {
+        state.positions[teamId] = Math.max(0, Math.min(FINISH, state.positions[teamId] + direction));
+      });
+      renderTrack();
+      await wait(190);
+    }
+    saveState();
+    renderAll();
+  }
+
   function afterMove(teamId) {
     if (state.winner) return;
     if (pendingEvent) {
@@ -289,7 +306,7 @@
   }
 
   function openChanceModal(event) {
-    const labels = { lucky: "May mắn", trap: "Chông gai", challenge: "Thử thách" };
+    const labels = { lucky: "Ô dấu +", trap: "Ô dấu -", challenge: "Bốc thăm" };
     const modal = $("#chanceModal");
     const closeButton = $("#closeChanceBtn");
     const drawCards = $("#drawCards");
@@ -309,6 +326,7 @@
         const button = document.createElement("button");
         button.className = "mystery-card";
         button.type = "button";
+        button.dataset.action = card.action;
         button.dataset.move = card.move;
         button.dataset.title = card.title;
         button.dataset.text = card.text;
@@ -326,6 +344,7 @@
   function pickMysteryCard(button) {
     if (!pendingEvent || pendingEvent.kind !== "challenge" || pendingEvent.cardChosen) return;
     const move = Number(button.dataset.move);
+    pendingEvent.action = button.dataset.action;
     pendingEvent.move = move;
     pendingEvent.title = button.dataset.title;
     pendingEvent.text = button.dataset.text;
@@ -337,7 +356,7 @@
       card.classList.add(card === button ? "is-picked" : "is-muted");
     });
     button.classList.add(button.dataset.tone);
-    button.innerHTML = `<span>${move > 0 ? "+" : ""}${move}</span><strong>${button.dataset.title}</strong>`;
+    button.innerHTML = `<span>${Number.isFinite(move) ? `${move > 0 ? "+" : ""}${move}` : "-"}</span><strong>${button.dataset.title}</strong>`;
     $("#closeChanceBtn").disabled = false;
     $("#closeChanceBtn").textContent = "Đóng và áp dụng";
   }
@@ -350,7 +369,17 @@
     $("#chanceModal").className = "chance-modal";
     $("#chanceModal").setAttribute("aria-hidden", "true");
     busy = true;
-    if (event.move) {
+    if (event.diceEffect) {
+      await rollSpecialDice(event.teamId, event.diceEffect === "forward" ? 1 : -1);
+    } else if (event.action === "allOpponentsBack") {
+      const opponents = teams.map(team => team.id).filter(id => id !== event.teamId);
+      $("#diceCaption").textContent = "Đối thủ lùi 3 bước";
+      await animateMoveTeams(opponents, -3);
+    } else if (event.action === "nearestMinus") {
+      const target = nearestMinusTile(state.positions[event.teamId]);
+      $("#diceCaption").textContent = `Tới ô - gần nhất: ${target}`;
+      await animateMoveTeam(event.teamId, target - state.positions[event.teamId], false);
+    } else if (event.move) {
       $("#diceCaption").textContent = `${event.move > 0 ? "+" : ""}${event.move} ô từ lá thăm`;
       await animateMoveTeam(event.teamId, event.move, false);
     } else if (event.skip) {
@@ -360,6 +389,42 @@
     }
     busy = false;
     if (!state.winner) nextTeam(false);
+  }
+
+  async function rollSpecialDice(teamId, direction) {
+    const isForward = direction > 0;
+    const title = isForward ? "Ô dấu +: tung xúc xắc để đi thêm!" : "Ô dấu -: tung xúc xắc để đi lùi!";
+    const dice = $("#diceDisplay");
+    const resultDice = $("#resultDice");
+    await showResultModal(isForward ? "correct" : "wrong", title, true, 650);
+    dice.classList.add("rolling");
+    resultDice.classList.add("rolling");
+    for (let i = 0; i < 12; i += 1) {
+      const flash = Math.floor(Math.random() * 6) + 1;
+      dice.textContent = flash;
+      resultDice.textContent = flash;
+      await wait(58);
+    }
+    const value = Math.floor(Math.random() * 6) + 1;
+    dice.textContent = value;
+    resultDice.textContent = value;
+    dice.classList.remove("rolling");
+    resultDice.classList.remove("rolling");
+    $("#diceCaption").textContent = `${isForward ? "Tiến" : "Lùi"} ${value} bước`;
+    await wait(600);
+    hideResultModal();
+    await animateMoveTeam(teamId, direction * value, false);
+  }
+
+  function nearestMinusTile(position) {
+    const minusTiles = Object.entries(specialTiles)
+      .filter(([, tile]) => tile.kind === "trap")
+      .map(([tile]) => Number(tile));
+    return minusTiles.reduce((best, tile) => {
+      const distance = Math.abs(tile - position);
+      const bestDistance = Math.abs(best - position);
+      return distance < bestDistance || (distance === bestDistance && tile < best) ? tile : best;
+    }, minusTiles[0]);
   }
 
   function nextTeam(show = true) {
@@ -398,11 +463,11 @@
   function resetTimer() {
     clearInterval(timerId);
     timerId = null;
-    remaining = Number($("#timeSelect").value);
+    remaining = QUESTION_SECONDS;
     updateTimer();
   }
 
-  function startTimer() {
+  function startQuestionTimer() {
     resetTimer();
     timerId = setInterval(() => {
       remaining -= 1;
@@ -410,9 +475,19 @@
       if (remaining <= 0) {
         clearInterval(timerId);
         timerId = null;
-        showToast("Hết giờ!");
+        handleTimeUp();
       }
     }, 1000);
+  }
+
+  async function handleTimeUp() {
+    if (!currentQuestion || answered || busy) return;
+    answered = true;
+    setChoicesLocked();
+    closeQuestionOverlay();
+    await showResultModal("wrong", "Hết 30 giây, nhóm mất lượt.", false, 1900);
+    hideResultModal();
+    nextTeam(false);
   }
 
   function openFinish(teamId) {
@@ -494,10 +569,8 @@
     renderAll();
   });
   $("#drawQuestionBtn").addEventListener("click", () => requireAdmin(pickQuestion));
-  $("#startTimerBtn").addEventListener("click", () => requireAdmin(startTimer));
   $("#nextTeamBtn").addEventListener("click", () => requireAdmin(() => nextTeam()));
   $("#resetGameBtn").addEventListener("click", () => requireAdmin(resetGame));
-  $("#timeSelect").addEventListener("change", resetTimer);
   $("#choices").addEventListener("click", event => {
     const button = event.target.closest(".choice");
     if (button) chooseAnswer(button);
