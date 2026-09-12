@@ -28,7 +28,7 @@
     { action: "move", move: 7, title: "May mắn lớn", text: "Được đi thêm 7 bước.", tone: "forward" },
     { action: "move", move: -7, title: "Chông gai lớn", text: "Đi lùi 7 bước.", tone: "back" },
     { action: "allOpponentsBack", move: -3, title: "Đẩy lùi đối thủ", text: "Toàn bộ đối thủ bị lùi 3 bước.", tone: "back" },
-    { action: "nearestMinus", title: "Trượt về ô âm", text: "Đi tới ô dấu - gần nhất.", tone: "back" }
+    { action: "nearestMinus", title: "Tiến tới ô âm", text: "Đi tới ô dấu - phía trước và kích hoạt ô đó.", tone: "back" }
   ];
   const questions = [
     { topic: "Độc lập dân tộc", q: "Theo Hồ Chí Minh, độc lập dân tộc trước hết là gì?", choices: ["Một khẩu hiệu chính trị", "Quyền thiêng liêng, bất khả xâm phạm của dân tộc", "Một mục tiêu kinh tế ngắn hạn", "Một hình thức ngoại giao"], correct: 1 },
@@ -61,6 +61,7 @@
   let answered = false;
   let busy = false;
   let pendingEvent = null;
+  let eventQueue = [];
   let timerId = null;
   let remaining = QUESTION_SECONDS;
 
@@ -257,9 +258,9 @@
     $("#diceCaption").textContent = `Đi ${value} ô`;
     await wait(650);
     hideResultModal();
-    await animateMoveTeam(state.activeTeam, value, true);
+    const triggered = await animateMoveTeam(state.activeTeam, value, true);
     busy = false;
-    afterMove(state.activeTeam);
+    if (!triggered) afterMove(state.activeTeam);
   }
 
   async function animateMoveTeam(teamId, delta, canDrawEvent) {
@@ -275,12 +276,12 @@
       state.winner = teamId;
       openFinish(teamId);
     }
+    let triggered = false;
     if (canDrawEvent && !state.winner) {
-      const special = specialTiles[state.positions[teamId]];
-      pendingEvent = special ? { ...special, teamId } : null;
-      if (pendingEvent) openChanceModal(pendingEvent);
+      triggered = queueOrOpenSpecial(teamId);
     }
     renderAll(state.positions[teamId]);
+    return triggered;
   }
 
   async function animateMoveTeams(teamIds, delta) {
@@ -294,6 +295,32 @@
     }
     saveState();
     renderAll();
+    return teamIds.reduce((triggered, teamId) => queueOrOpenSpecial(teamId) || triggered, false);
+  }
+
+  function buildSpecialEvent(teamId) {
+    if (state.winner) return null;
+    const special = specialTiles[state.positions[teamId]];
+    return special ? { ...special, teamId } : null;
+  }
+
+  function queueOrOpenSpecial(teamId) {
+    const event = buildSpecialEvent(teamId);
+    if (!event) return false;
+    if (pendingEvent) {
+      eventQueue.push(event);
+    } else {
+      pendingEvent = event;
+      openChanceModal(event);
+    }
+    return true;
+  }
+
+  function openNextQueuedEvent() {
+    if (pendingEvent || eventQueue.length === 0) return false;
+    pendingEvent = eventQueue.shift();
+    openChanceModal(pendingEvent);
+    return true;
   }
 
   function afterMove(teamId) {
@@ -338,7 +365,12 @@
   }
 
   function shuffleCards(cards) {
-    return [...cards].sort(() => Math.random() - 0.5);
+    const shuffled = [...cards];
+    for (let i = shuffled.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
   }
 
   function pickMysteryCard(button) {
@@ -369,26 +401,27 @@
     $("#chanceModal").className = "chance-modal";
     $("#chanceModal").setAttribute("aria-hidden", "true");
     busy = true;
+    let triggered = false;
     if (event.diceEffect) {
-      await rollSpecialDice(event.teamId, event.diceEffect === "forward" ? 1 : -1);
+      triggered = await rollSpecialDice(event.teamId, event.diceEffect === "forward" ? 1 : -1);
     } else if (event.action === "allOpponentsBack") {
       const opponents = teams.map(team => team.id).filter(id => id !== event.teamId);
       $("#diceCaption").textContent = "Đối thủ lùi 3 bước";
-      await animateMoveTeams(opponents, -3);
+      triggered = await animateMoveTeams(opponents, -3);
     } else if (event.action === "nearestMinus") {
-      const target = nearestMinusTile(state.positions[event.teamId]);
-      $("#diceCaption").textContent = `Tới ô - gần nhất: ${target}`;
-      await animateMoveTeam(event.teamId, target - state.positions[event.teamId], false);
+      const target = nextMinusTile(state.positions[event.teamId]);
+      $("#diceCaption").textContent = `Tới ô - phía trước: ${target}`;
+      triggered = await animateMoveTeam(event.teamId, target - state.positions[event.teamId], true);
     } else if (event.move) {
       $("#diceCaption").textContent = `${event.move > 0 ? "+" : ""}${event.move} ô từ lá thăm`;
-      await animateMoveTeam(event.teamId, event.move, false);
+      triggered = await animateMoveTeam(event.teamId, event.move, true);
     } else if (event.skip) {
       state.skips[event.teamId] = event.skip;
       saveState();
       renderAll();
     }
     busy = false;
-    if (!state.winner) nextTeam(false);
+    if (!state.winner && !triggered && !openNextQueuedEvent()) nextTeam(false);
   }
 
   async function rollSpecialDice(teamId, direction) {
@@ -413,18 +446,15 @@
     $("#diceCaption").textContent = `${isForward ? "Tiến" : "Lùi"} ${value} bước`;
     await wait(600);
     hideResultModal();
-    await animateMoveTeam(teamId, direction * value, false);
+    return animateMoveTeam(teamId, direction * value, true);
   }
 
-  function nearestMinusTile(position) {
+  function nextMinusTile(position) {
     const minusTiles = Object.entries(specialTiles)
       .filter(([, tile]) => tile.kind === "trap")
-      .map(([tile]) => Number(tile));
-    return minusTiles.reduce((best, tile) => {
-      const distance = Math.abs(tile - position);
-      const bestDistance = Math.abs(best - position);
-      return distance < bestDistance || (distance === bestDistance && tile < best) ? tile : best;
-    }, minusTiles[0]);
+      .map(([tile]) => Number(tile))
+      .sort((a, b) => a - b);
+    return minusTiles.find(tile => tile > position) || minusTiles[minusTiles.length - 1];
   }
 
   function nextTeam(show = true) {
@@ -531,6 +561,7 @@
     currentQuestion = null;
     answered = false;
     pendingEvent = null;
+    eventQueue = [];
     busy = false;
     $("#chanceModal").className = "chance-modal";
     $("#chanceModal").setAttribute("aria-hidden", "true");
