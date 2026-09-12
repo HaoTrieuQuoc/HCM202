@@ -152,6 +152,15 @@
   function renderAll(landingPosition = null) {
     renderTrack(landingPosition);
     renderTeams();
+    updateGameOverControls();
+  }
+
+  function updateGameOverControls() {
+    const isOver = Boolean(state.winner);
+    $("#drawQuestionBtn").disabled = isOver;
+    $("#nextTeamBtn").disabled = isOver;
+    $("#teamSelect").disabled = isOver;
+    if (isOver) $("#diceCaption").textContent = "Game đã kết thúc";
   }
 
   function resetQuestionView() {
@@ -169,6 +178,7 @@
   }
 
   function pickQuestion() {
+    if (state.winner) return showToast("Game đã kết thúc, hãy reset để chơi lại");
     if (busy) return showToast("Đang xử lý lượt hiện tại");
     if (pendingEvent) return showToast("Hãy đóng lá thăm trước khi bốc câu hỏi mới");
     if (state.used.length >= questions.length) state.used = [];
@@ -192,7 +202,7 @@
   }
 
   async function chooseAnswer(button) {
-    if (!currentQuestion || answered || busy) return;
+    if (!currentQuestion || answered || busy || state.winner) return;
     answered = true;
     clearInterval(timerId);
     timerId = null;
@@ -458,6 +468,7 @@
   }
 
   function nextTeam(show = true) {
+    if (state.winner) return;
     currentQuestion = null;
     resetQuestionView();
     clearInterval(timerId);
@@ -511,7 +522,7 @@
   }
 
   async function handleTimeUp() {
-    if (!currentQuestion || answered || busy) return;
+    if (!currentQuestion || answered || busy || state.winner) return;
     answered = true;
     setChoicesLocked();
     closeQuestionOverlay();
@@ -521,7 +532,17 @@
   }
 
   function openFinish(teamId) {
-    $("#winnerText").textContent = `${teamById(teamId).name} đã về đích!`;
+    clearInterval(timerId);
+    timerId = null;
+    currentQuestion = null;
+    answered = true;
+    pendingEvent = null;
+    eventQueue = [];
+    busy = false;
+    closeQuestionOverlay();
+    $("#chanceModal").className = "chance-modal";
+    $("#chanceModal").setAttribute("aria-hidden", "true");
+    $("#winnerText").textContent = `Chúc mừng ${teamById(teamId).name} đã về đích!`;
     $("#finishModal").classList.add("is-open");
     $("#finishModal").setAttribute("aria-hidden", "false");
     saveState();
@@ -565,6 +586,8 @@
     busy = false;
     $("#chanceModal").className = "chance-modal";
     $("#chanceModal").setAttribute("aria-hidden", "true");
+    $("#finishModal").classList.remove("is-open");
+    $("#finishModal").setAttribute("aria-hidden", "true");
     hideResultModal();
     $("#diceDisplay").textContent = "?";
     $("#diceCaption").textContent = "Đúng để tung xúc xắc";
@@ -611,12 +634,10 @@
     if (button) pickMysteryCard(button);
   });
   $("#closeChanceBtn").addEventListener("click", closeChanceAndApply);
-  $("#closeFinishBtn").addEventListener("click", () => {
-    $("#finishModal").classList.remove("is-open");
-    $("#finishModal").setAttribute("aria-hidden", "true");
-  });
+  $("#resetFinishBtn").addEventListener("click", resetGame);
 
   renderControls();
   renderAll();
   updateTimer();
+  if (state.winner) openFinish(state.winner);
 })();
