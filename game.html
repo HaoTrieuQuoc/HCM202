@@ -1,52 +1,151 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Đường Đua Chương 3 | Game ôn tập</title>
-  <meta name="description" content="Game đường đua trắc nghiệm ôn tập Chương 3 Tư tưởng Hồ Chí Minh cho 5 nhóm">
+  <title>Đường Đua Độc Lập | Game ôn tập</title>
+  <meta name="description"
+    content="Đường Đua Độc Lập - Game trắc nghiệm ôn tập Chương 3 Tư tưởng Hồ Chí Minh cho 5 nhóm">
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="css/game.css">
 </head>
+
 <body>
   <div class="game-bg" aria-hidden="true"></div>
 
   <header class="game-header">
-    <a class="brand" href="index.html"><span>HCM</span><strong>Đường Đua Chương 3</strong></a>
-    <button class="gold-btn" id="adminOpenBtn">Quản trò</button>
+    <a class="brand" href="index.html"><span class="brand-logo">HCM</span><strong>Đường Đua <span
+          class="highlight-doc-lap">Độc Lập</span></strong></a>
+    <div class="header-nav">
+      <button id="soundToggleBtn" class="ghost-btn sound-btn" type="button" title="Bật/Tắt âm thanh">
+        <span id="soundIcon">🔊</span>
+        <span id="soundLabel">Bật</span>
+      </button>
+      <a class="ghost-btn" href="index.html">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+          <polyline points="9 22 9 12 15 12 15 22" />
+        </svg>
+        <span>Trang chủ</span>
+      </a>
+      <a class="ghost-btn" href="luat-choi.html">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="16" x2="12" y2="12" />
+          <line x1="12" y1="8" x2="12.01" y2="8" />
+        </svg>
+        <span>Luật chơi</span>
+      </a>
+      <!-- Quản trò Status & Menu -->
+      <div class="admin-nav-wrap">
+        <button class="ghost-btn admin-status-btn is-locked" id="adminStatusBtn" type="button" aria-haspopup="dialog"
+          title="Chế độ Quản trò (Bảo vệ phòng chơi)">
+          <span class="admin-status-icon" id="adminStatusIcon">🔒</span>
+          <span class="admin-status-text" id="adminStatusText">Khán giả (Chỉ xem)</span>
+          <span class="admin-unlock-chip" id="adminUnlockChip">Mở khóa 🔑</span>
+        </button>
+        <div class="admin-dropdown-menu" id="adminDropdownMenu" hidden>
+          <div class="admin-dropdown-header">
+            <span class="adm-crown">👑</span>
+            <div class="adm-header-info">
+              <strong>Quyền Quản trò</strong>
+              <small>Đang có toàn quyền điều khiển cuộc đua</small>
+            </div>
+          </div>
+          <div class="admin-menu-divider"></div>
+          <button type="button" class="admin-menu-item" id="menuChangePwdBtn">
+            <span class="menu-item-icon">⚙️</span>
+            <span>Đổi mật khẩu Quản trò</span>
+          </button>
+          <button type="button" class="admin-menu-item text-danger" id="menuLockAdminBtn">
+            <span class="menu-item-icon">🔒</span>
+            <span>Khóa lại (Về Chế độ Khán giả)</span>
+          </button>
+        </div>
+      </div>
+    </div>
   </header>
 
   <main class="game-shell">
     <section class="game-table">
       <div class="table-top">
-        <div>
-          <span class="eyebrow">5 nhóm đua tới đích</span>
-          <h1>Trả lời đúng, tung xúc xắc, vượt chông gai</h1>
+        <div class="header-championship">
+          <div class="championship-tag">
+            <span class="pulse-emerald"></span>
+            <span class="tag-title">ĐẤU TRƯỜNG CHƯƠNG 3</span>
+            <span class="tag-divider">/</span>
+            <span class="tag-sub">5 NHÓM ĐUA TRANH TÀI</span>
+          </div>
+          <h1 class="championship-headline">
+            <span class="txt-fun-1">Học không quạu</span>
+            <span class="headline-bullet">&bull;</span>
+            <span class="txt-fun-2">Đua hết mình</span>
+            <span class="headline-bullet">&bull;</span>
+            <span class="txt-accent">Vượt chông gai</span>
+          </h1>
         </div>
         <div class="turn-card">
-          <span>Lượt <b id="turnNum">1</b></span>
+          <span>Lượt thi đấu &bull; Lượt <b id="turnNum">1</b></span>
           <strong id="currentTeamLabel">Nhóm 1</strong>
         </div>
       </div>
 
       <section class="board-zone">
         <div class="board-head">
-          <div>
-            <span class="mini-label">Đường đua độc lập</span>
-            <h2>Start → Đích</h2>
+          <div class="circuit-hud">
+            <div class="circuit-stage start-stage">
+              <span class="stage-pin">🚩</span>
+              <div class="stage-info">
+                <span class="stage-title">XUẤT PHÁT</span>
+                <span class="stage-sub">Ô 0 (START)</span>
+              </div>
+            </div>
+            <div class="circuit-flow">
+              <span class="circuit-rail"></span>
+              <span class="circuit-chip">⚡ 21 CHẶNG ĐUA ⚡</span>
+              <span class="circuit-rail"></span>
+            </div>
+            <div class="circuit-stage finish-stage">
+              <span class="stage-pin">👑</span>
+              <div class="stage-info">
+                <span class="stage-title">VỀ ĐÍCH</span>
+                <span class="stage-sub">Ô 21 (WINNER)</span>
+              </div>
+            </div>
           </div>
           <div class="dice-wrap" aria-live="polite">
-            <div class="dice" id="diceDisplay">?</div>
+            <div class="dice-scene" id="diceDisplayScene">
+              <div class="dice-cube show-1" id="diceDisplay">
+                <div class="dice-face face-1"><span class="dice-num num-1">1</span></div>
+                <div class="dice-face face-2"><span class="dice-num">2</span></div>
+                <div class="dice-face face-3"><span class="dice-num">3</span></div>
+                <div class="dice-face face-4"><span class="dice-num">4</span></div>
+                <div class="dice-face face-5"><span class="dice-num">5</span></div>
+                <div class="dice-face face-6"><span class="dice-num num-6">6</span></div>
+              </div>
+            </div>
             <span id="diceCaption">Đúng để tung xúc xắc</span>
           </div>
         </div>
 
         <section class="quiz-dock" aria-live="polite">
           <div class="quiz-head">
-            <span class="eyebrow" id="questionTopic">Câu hỏi trắc nghiệm</span>
-            <div class="timer" id="timer">30</div>
+            <div class="quiz-meta-tag">
+              <span class="quiz-badge" id="quizActiveTeamBadge">Lượt của Nhóm 1</span>
+              <span class="eyebrow" id="questionTopic">Quyền dân tộc</span>
+            </div>
+            <div class="timer" id="timer">
+              <span class="timer-icon">⏳</span>
+              <span class="timer-sec" id="timerSec">30</span>s
+            </div>
           </div>
-          <h2 id="questionText">Quản trò đăng nhập, chọn nhóm và bấm “Bốc câu hỏi”.</h2>
+          <div class="quiz-progress-bar">
+            <div class="quiz-progress-fill" id="timerProgressFill"></div>
+          </div>
+          <h2 id="questionText">Chọn nhóm đang chơi và bấm “Bốc câu hỏi”.</h2>
           <div class="choices" id="choices"></div>
           <div class="answer-line" id="answerLine">Chọn đáp án để biết đúng/sai.</div>
         </section>
@@ -55,35 +154,48 @@
         <div class="team-strip" id="teamList"></div>
       </section>
 
-      <section class="control-panel" id="controlPanel" aria-hidden="true">
-        <div class="control-row">
-          <label>Nhóm đang chơi<select id="teamSelect"></select></label>
-          <button class="gold-btn" id="drawQuestionBtn">Bốc câu hỏi</button>
-          <button class="ghost-btn" id="nextTeamBtn">Chuyển lượt</button>
-          <button class="ghost-btn" id="resetGameBtn">Reset</button>
-          <button class="ghost-btn" id="logoutBtn">Đăng xuất</button>
+      <!-- Thanh Trực Tiếp Dành Cho Khán Giả (Chỉ Xem) -->
+      <section class="spectator-live-bar" id="spectatorLiveBar">
+        <div class="spectator-live-left">
+          <span class="live-pulse-dot"></span>
+          <span class="live-badge">TRỰC TIẾP</span>
+          <div class="live-text-wrap">
+            <span class="live-main-text">Đang xem diễn biến trận đấu trực tiếp</span>
+            <span class="live-sub-text">Chỉ Quản trò mới có quyền bốc câu hỏi và đặt lại vòng đua</span>
+          </div>
+        </div>
+        <button class="ghost-btn btn-sm" id="unlockAdminBannerBtn" type="button">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+          <span>Quản trò đăng nhập 🔑</span>
+        </button>
+      </section>
+
+      <!-- Bảng Điều Khiển Dành Riêng Cho Quản Trò (Ẩn khi là Khán giả) -->
+      <section class="control-panel" id="controlPanel">
+        <div class="control-row" id="controlRow">
+          <label>
+            <span>Nhóm đang chơi:</span>
+            <select id="teamSelect"></select>
+          </label>
+          <button class="gold-btn" id="drawQuestionBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <polygon points="10 8 16 12 10 16 10 8" />
+            </svg>
+            <span>Bốc câu hỏi</span>
+          </button>
+          <button class="ghost-btn" id="resetGameBtn">
+            <span>Đặt lại 🔄</span>
+          </button>
         </div>
       </section>
     </section>
 
-    <section class="rules">
-      <article><strong>Cách chơi</strong><p>Tới lượt nhóm nào, quản trò bốc câu hỏi. Trả lời đúng thì xúc xắc tự lăn và quân cờ tự di chuyển. Trả lời sai thì đứng yên và chuyển lượt.</p></article>
-      <article><strong>Ô đặc biệt</strong><p>Khi quân cờ dừng ở ô may mắn, chông gai hoặc thử thách, popup lá thăm sẽ hiện lên. Đóng popup để áp dụng hiệu ứng và sang lượt tiếp theo.</p></article>
-    </section>
   </main>
-
-  <div class="login-modal" id="loginModal" aria-hidden="true">
-    <div class="login-card">
-      <button class="close-btn" id="closeLoginBtn" aria-label="Đóng">×</button>
-      <span class="eyebrow">Đăng nhập quản trò</span>
-      <h2>Nhập mật khẩu admin</h2>
-      <form id="loginForm">
-        <input id="passwordInput" type="password" inputmode="numeric" placeholder="Mật khẩu" autocomplete="current-password">
-        <button class="gold-btn" type="submit">Vào bảng điều khiển</button>
-      </form>
-      <p class="login-error" id="loginError">Mật khẩu chưa đúng.</p>
-    </div>
-  </div>
 
   <div class="chance-modal" id="chanceModal" aria-hidden="true">
     <div class="chance-card" id="chanceCard">
@@ -104,7 +216,16 @@
   <div class="result-modal" id="resultModal" aria-hidden="true">
     <div class="result-card">
       <strong id="resultText">Bạn đã trả lời đúng!</strong>
-      <div class="result-dice" id="resultDice">?</div>
+      <div class="dice-scene result-scene" id="resultDiceScene">
+        <div class="dice-cube result-cube show-1" id="resultDice">
+          <div class="dice-face face-1"><span class="dice-num num-1">1</span></div>
+          <div class="dice-face face-2"><span class="dice-num">2</span></div>
+          <div class="dice-face face-3"><span class="dice-num">3</span></div>
+          <div class="dice-face face-4"><span class="dice-num">4</span></div>
+          <div class="dice-face face-5"><span class="dice-num">5</span></div>
+          <div class="dice-face face-6"><span class="dice-num num-6">6</span></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -112,11 +233,94 @@
     <div class="finish-card">
       <span>Chiến thắng</span>
       <h2 id="winnerText">Chúc mừng nhóm đã về đích!</h2>
-      <button class="gold-btn" id="resetFinishBtn">Reset game</button>
+      <button class="gold-btn" id="resetFinishBtn">Chơi lại từ đầu 🔄</button>
+    </div>
+  </div>
+
+  <!-- Modal Nhập Mật Khẩu Quản Trò -->
+  <div class="admin-modal" id="adminAuthModal" aria-hidden="true">
+    <div class="admin-dialog">
+      <div class="admin-dialog-head">
+        <div class="admin-dialog-badge">
+          <span>👑</span>
+          <span>QUẢN TRÒ • GAME MASTER</span>
+        </div>
+        <button class="admin-dialog-close" id="closeAdminAuthBtn" type="button" aria-label="Đóng">✕</button>
+      </div>
+      <h2 class="admin-dialog-title">Nhập Mật Khẩu Quản Trò</h2>
+      <p class="admin-dialog-desc" id="adminAuthDesc">Mở khóa toàn quyền điều khiển: bốc câu hỏi, chọn đáp án, đổi nhóm
+        và điều hành cuộc đua.</p>
+
+      <form id="adminAuthForm" onsubmit="return false;">
+        <div class="admin-input-group">
+          <span class="input-icon">🔑</span>
+          <input type="password" id="adminPasswordInput" placeholder="Nhập mật khẩu Quản trò..."
+            autocomplete="current-password" spellcheck="false">
+          <button type="button" class="pwd-toggle-btn" id="pwdToggleBtn" aria-label="Hiện/ẩn mật khẩu">👁️</button>
+        </div>
+        <div class="admin-dialog-hint">
+          <span>Gợi ý mặc định: <code>3108</code></span>
+        </div>
+        <div class="admin-dialog-error" id="adminAuthError" hidden>
+          ❌ Mật khẩu không chính xác! Vui lòng thử lại.
+        </div>
+        <div class="admin-dialog-actions">
+          <button type="submit" class="gold-btn" id="submitAdminAuthBtn">
+            <span>Mở khóa Quản trò</span>
+          </button>
+          <button type="button" class="ghost-btn" id="cancelAdminAuthBtn">
+            <span>Để sau (Chỉ xem)</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Đổi Mật Khẩu Quản Trò -->
+  <div class="admin-modal" id="changePwdModal" aria-hidden="true">
+    <div class="admin-dialog">
+      <div class="admin-dialog-head">
+        <div class="admin-dialog-badge">
+          <span>⚙️</span>
+          <span>CÀI ĐẶT BẢO MẬT</span>
+        </div>
+        <button class="admin-dialog-close" id="closeChangePwdBtn" type="button" aria-label="Đóng">✕</button>
+      </div>
+      <h2 class="admin-dialog-title">Đổi Mật Khẩu Quản Trò</h2>
+      <p class="admin-dialog-desc">Thiết lập mật khẩu mới cho riêng bạn để phòng tránh người khác mở khóa.</p>
+
+      <form id="changePwdForm" onsubmit="return false;">
+        <div class="admin-field">
+          <label for="oldPwdInput">Mật khẩu hiện tại:</label>
+          <input type="password" id="oldPwdInput" placeholder="Nhập mật khẩu đang dùng..."
+            autocomplete="current-password">
+        </div>
+        <div class="admin-field">
+          <label for="newPwdInput">Mật khẩu mới:</label>
+          <input type="password" id="newPwdInput" placeholder="Nhập mật khẩu mới (ít nhất 4 ký tự)..."
+            autocomplete="new-password">
+        </div>
+        <div class="admin-field">
+          <label for="confirmPwdInput">Xác nhận mật khẩu mới:</label>
+          <input type="password" id="confirmPwdInput" placeholder="Nhập lại mật khẩu mới..."
+            autocomplete="new-password">
+        </div>
+        <div class="admin-dialog-error" id="changePwdError" hidden></div>
+        <div class="admin-dialog-actions">
+          <button type="submit" class="gold-btn" id="submitChangePwdBtn">
+            <span>Lưu mật khẩu mới</span>
+          </button>
+          <button type="button" class="ghost-btn" id="cancelChangePwdBtn">
+            <span>Hủy</span>
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 
   <div class="toast" id="toast"></div>
+  <canvas id="gameConfetti" class="game-confetti"></canvas>
   <script src="js/game.js"></script>
 </body>
+
 </html>
