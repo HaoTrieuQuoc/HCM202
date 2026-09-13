@@ -182,7 +182,15 @@
     ".principle-cards",
     ".condition-triangle",
     ".image-triptych",
-    ".life-grid"
+    ".life-grid",
+    ".horizontal-timeline",
+    ".party-diagram",
+    ".unity-diagram",
+    ".compare-logic",
+    ".character-grid",
+    ".radial-section",
+    ".premise-flow",
+    ".sovereignty-grid"
   ].forEach(groupSelector => {
     $$(groupSelector).forEach(group => {
       Array.from(group.children).forEach((child, idx) => {
@@ -320,7 +328,7 @@
   /* ═══════════════════════════════════════
      CARD SPOTLIGHT
      ═══════════════════════════════════════ */
-  $$(".map-card, .focus-card, .method-card, .soc-panel, .number-card, .compare-col").forEach(card => {
+  $$(".map-card, .focus-card, .method-card, .soc-panel, .number-card, .compare-col, .timeline-card, .party-node, .orbit-card, .character-grid article").forEach(card => {
     card.addEventListener("mousemove", e => {
       const r = card.getBoundingClientRect();
       card.style.setProperty("--mx", ((e.clientX - r.left) / r.width * 100) + "%");
