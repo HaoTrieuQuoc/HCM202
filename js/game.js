@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const ADMIN_PASSWORD_DEFAULT = "3108";
+  const ADMIN_PASSWORD_DEFAULT_HASH = "50d65da5a5788e6183a480898578d672eb3f1d593a5b308e6e0b971e90fab6b9";
   const ADMIN_KEY_STORAGE = "hcm_admin_pwd";
   const ADMIN_AUTH_SESSION = "hcm_admin_unlocked";
   const FINISH = 21;
@@ -541,8 +541,26 @@
   const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
   // --- Quản trò / Game Master Authentication System ---
-  function getAdminPassword() {
-    return localStorage.getItem(ADMIN_KEY_STORAGE) || ADMIN_PASSWORD_DEFAULT;
+  function isPasswordHash(value) {
+    return /^[a-f0-9]{64}$/i.test(value || "");
+  }
+
+  async function hashPassword(value) {
+    const data = new TextEncoder().encode(value);
+    const digest = await crypto.subtle.digest("SHA-256", data);
+    return [...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, "0")).join("");
+  }
+
+  async function verifyAdminPassword(entered) {
+    const stored = localStorage.getItem(ADMIN_KEY_STORAGE);
+    if (stored && !isPasswordHash(stored)) {
+      const matched = entered === stored;
+      if (matched) {
+        localStorage.setItem(ADMIN_KEY_STORAGE, await hashPassword(entered));
+      }
+      return matched;
+    }
+    return await hashPassword(entered) === (stored || ADMIN_PASSWORD_DEFAULT_HASH);
   }
 
   function isAdmin() {
@@ -618,11 +636,11 @@
     modal.setAttribute("aria-hidden", "true");
   }
 
-  function handleAdminAuthSubmit() {
+  async function handleAdminAuthSubmit() {
     const input = $("#adminPasswordInput");
     const err = $("#adminAuthError");
     const entered = (input?.value || "").trim();
-    if (entered === getAdminPassword()) {
+    if (await verifyAdminPassword(entered)) {
       setAdminStatus(true);
       closeAdminAuthModal();
       SoundFX.correct();
@@ -661,7 +679,7 @@
     modal.setAttribute("aria-hidden", "true");
   }
 
-  function handleChangePwdSubmit() {
+  async function handleChangePwdSubmit() {
     const oldVal = ($("#oldPwdInput")?.value || "").trim();
     const newVal = ($("#newPwdInput")?.value || "").trim();
     const confirmVal = ($("#confirmPwdInput")?.value || "").trim();
@@ -675,7 +693,7 @@
       SoundFX.wrong();
     }
 
-    if (oldVal !== getAdminPassword()) {
+    if (!(await verifyAdminPassword(oldVal))) {
       showError("❌ Mật khẩu hiện tại không chính xác!");
       $("#oldPwdInput")?.focus();
       return;
@@ -691,7 +709,7 @@
       return;
     }
 
-    localStorage.setItem(ADMIN_KEY_STORAGE, newVal);
+    localStorage.setItem(ADMIN_KEY_STORAGE, await hashPassword(newVal));
     closeChangePwdModal();
     SoundFX.correct();
     showToast("✅ Đã cập nhật mật khẩu Quản trò mới thành công!");
@@ -705,6 +723,20 @@
   let eventQueue = [];
   let timerId = null;
   let remaining = QUESTION_SECONDS;
+  const tileCache = [];
+  let actionDepth = 0;
+
+  function beginActionRender() {
+    actionDepth += 1;
+    document.body?.classList.add("is-action-running");
+  }
+
+  function endActionRender() {
+    actionDepth = Math.max(0, actionDepth - 1);
+    if (actionDepth === 0) {
+      document.body?.classList.remove("is-action-running");
+    }
+  }
 
   function freshState() {
     return {
@@ -754,7 +786,10 @@
 
   function renderTrack(landingPosition = null) {
     const track = $("#track");
+    if (!track) return;
     track.innerHTML = "";
+    tileCache.length = 0;
+    const fragment = document.createDocumentFragment();
 
     // Track Hub - Emblem at Col 1, Rows 2-3
     const hub = document.createElement("div");
@@ -765,13 +800,14 @@
         <span class="hub-line highlight-gold">ĐỘC LẬP</span>
       </strong>
     `;
-    track.appendChild(hub);
+    fragment.appendChild(hub);
 
     for (let i = 0; i <= FINISH; i += 1) {
       const special = specialTiles[i];
       const isCurrentTeamTile = state.positions[state.activeTeam] === i;
       const tile = document.createElement("div");
       tile.className = `tile ${i === 0 ? "start" : ""} ${i === FINISH ? "finish" : ""} ${special?.kind || ""} ${landingPosition === i ? "active-landing" : ""} ${isCurrentTeamTile ? "current-turn-tile" : ""}`;
+      tile.dataset.position = String(i);
 
       // Calculate serpentine coordinates for 21 tiles across 8 columns:
       // Row 1 (Cols 1..8): Tiles 0 to 7 (Tile 0 is Start, Tile 7 turns down ↴)
@@ -819,6 +855,7 @@
       `;
 
       const tokenWrap = tile.querySelector(".tokens");
+      tileCache[i] = { tile, tokenWrap };
       teams.filter(team => state.positions[team.id] === i).forEach(team => {
         const token = document.createElement("span");
         const isActiveTeam = team.id === state.activeTeam;
@@ -834,8 +871,49 @@
         tokenWrap.appendChild(token);
       });
 
-      track.appendChild(tile);
+      fragment.appendChild(tile);
     }
+
+    track.appendChild(fragment);
+  }
+
+  function updateTrackTokens(landingPosition = null) {
+    const track = $("#track");
+    if (!track) return;
+    if (tileCache.length !== FINISH + 1 || tileCache.some(entry => !entry?.tile?.isConnected)) {
+      renderTrack(landingPosition);
+      return;
+    }
+
+    tileCache.forEach(({ tile, tokenWrap }, position) => {
+      tile.classList.toggle("current-turn-tile", state.positions[state.activeTeam] === position);
+      if (tile.classList.contains("active-landing")) {
+        tile.classList.remove("active-landing");
+      }
+      if (tokenWrap) tokenWrap.textContent = "";
+    });
+
+    if (landingPosition !== null) {
+      tileCache[landingPosition]?.tile?.classList.add("active-landing");
+    }
+
+    teams.forEach(team => {
+      const position = state.positions[team.id];
+      const tokenWrap = tileCache[position]?.tokenWrap;
+      if (!tokenWrap) return;
+      const token = document.createElement("span");
+      const isActiveTeam = team.id === state.activeTeam;
+      token.className = `token ${team.id} ${isActiveTeam ? "active-team-pawn" : ""}`;
+      token.textContent = team.short;
+      token.title = `${team.name} (vị trí: ${position})`;
+      if (isActiveTeam) {
+        const arrowIndicator = document.createElement("span");
+        arrowIndicator.className = "active-turn-arrow";
+        arrowIndicator.textContent = "▼";
+        token.appendChild(arrowIndicator);
+      }
+      tokenWrap.appendChild(token);
+    });
   }
 
   function renderTeams() {
@@ -863,7 +941,7 @@
   }
 
   function renderAll(landingPosition = null) {
-    renderTrack(landingPosition);
+    updateTrackTokens(landingPosition);
     renderTeams();
     updateGameOverControls();
   }
@@ -994,6 +1072,7 @@
   async function rollDice() {
     if (busy || state.winner) return;
     busy = true;
+    beginActionRender();
     const dice = $("#diceDisplay");
     const resultDice = $("#resultDice");
     await showResultModal("correct", "Bạn đã trả lời đúng! Bắt đầu tung xúc xắc...", true, 850);
@@ -1017,15 +1096,17 @@
     hideResultModal();
     const triggered = await animateMoveTeam(state.activeTeam, value, true);
     busy = false;
+    endActionRender();
     if (!triggered) afterMove(state.activeTeam);
   }
 
   async function animateMoveTeam(teamId, delta, canDrawEvent) {
+    beginActionRender();
     const direction = delta >= 0 ? 1 : -1;
     for (let step = 0; step < Math.abs(delta); step += 1) {
       SoundFX.step();
       state.positions[teamId] = Math.max(0, Math.min(FINISH, state.positions[teamId] + direction));
-      renderTrack(state.positions[teamId]);
+      updateTrackTokens(state.positions[teamId]);
       await wait(190);
       if (state.positions[teamId] === FINISH) break;
     }
@@ -1039,22 +1120,26 @@
       triggered = queueOrOpenSpecial(teamId);
     }
     renderAll(state.positions[teamId]);
+    endActionRender();
     return triggered;
   }
 
   async function animateMoveTeams(teamIds, delta) {
+    beginActionRender();
     const direction = delta >= 0 ? 1 : -1;
     for (let step = 0; step < Math.abs(delta); step += 1) {
       SoundFX.step();
       teamIds.forEach(teamId => {
         state.positions[teamId] = Math.max(0, Math.min(FINISH, state.positions[teamId] + direction));
       });
-      renderTrack();
+      updateTrackTokens();
       await wait(190);
     }
     saveState();
     renderAll();
-    return teamIds.reduce((triggered, teamId) => queueOrOpenSpecial(teamId) || triggered, false);
+    const triggered = teamIds.reduce((hasTriggered, teamId) => queueOrOpenSpecial(teamId) || hasTriggered, false);
+    endActionRender();
+    return triggered;
   }
 
   function buildSpecialEvent(teamId) {
@@ -1196,6 +1281,7 @@
   }
 
   async function rollSpecialDice(teamId, direction) {
+    beginActionRender();
     const isForward = direction > 0;
     const title = isForward ? "Ô dấu +: tung xúc xắc để đi thêm!" : "Ô dấu -: tung xúc xắc để đi lùi!";
     const dice = $("#diceDisplay");
@@ -1218,7 +1304,9 @@
     $("#diceCaption").textContent = `${isForward ? "Tiến" : "Lùi"} ${value} bước`;
     await wait(600);
     hideResultModal();
-    return animateMoveTeam(teamId, direction * value, true);
+    const triggered = await animateMoveTeam(teamId, direction * value, true);
+    endActionRender();
+    return triggered;
   }
 
   function nextMinusTile(position) {

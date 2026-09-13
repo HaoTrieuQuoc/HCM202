@@ -123,7 +123,7 @@
      ═══════════════════════════════════════ */
   const typingEl = $("#typingText");
   if (typingEl) {
-    const text = "Một mạch học trực quan: nắm nền tảng độc lập dân tộc, hiểu con đường cách mạng và kết nối CNXH như mục tiêu chiến lược bảo đảm độc lập bền vững.";
+    const text = "Trọng tâm: độc lập dân tộc phải thực chất, vì nhân dân; chủ nghĩa xã hội là mục tiêu chiến lược và điều kiện bảo đảm nền độc lập bền vững.";
     let i = 0;
     const type = () => {
       if (i < text.length) {
@@ -170,6 +170,28 @@
       requestAnimationFrame(tick);
     });
   }
+
+  /* ═══════════════════════════════════════
+     STAGGERED GROUPS
+     ═══════════════════════════════════════ */
+  [
+    ".chapter-map",
+    ".focus-grid",
+    ".method-grid",
+    ".soc-overview",
+    ".principle-cards",
+    ".condition-triangle",
+    ".image-triptych",
+    ".life-grid"
+  ].forEach(groupSelector => {
+    $$(groupSelector).forEach(group => {
+      Array.from(group.children).forEach((child, idx) => {
+        if (child.classList.contains("anim") && !child.dataset.delay) {
+          child.dataset.delay = String(idx * 90);
+        }
+      });
+    });
+  });
 
   /* ═══════════════════════════════════════
      INTERSECTION OBSERVER
@@ -292,6 +314,17 @@
     });
     card.addEventListener("mouseleave", () => {
       card.style.transform = "";
+    });
+  });
+
+  /* ═══════════════════════════════════════
+     CARD SPOTLIGHT
+     ═══════════════════════════════════════ */
+  $$(".map-card, .focus-card, .method-card, .soc-panel, .number-card, .compare-col").forEach(card => {
+    card.addEventListener("mousemove", e => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty("--mx", ((e.clientX - r.left) / r.width * 100) + "%");
+      card.style.setProperty("--my", ((e.clientY - r.top) / r.height * 100) + "%");
     });
   });
 

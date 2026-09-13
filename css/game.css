@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=Outfit:wght@600;700;800;900&display=swap');
-
 :root {
   --bg: #120e0b;
   --paper: #fff7e8;
@@ -73,7 +71,7 @@ a {
   position: fixed;
   inset: 0;
   z-index: -2;
-  background: url("../img/la-co-viet-nam-bay-phap-phoi.jpg") center/cover no-repeat;
+  background: url("../img/la-co-viet-nam-bay-phap-phoi-optimized.jpg") center/cover no-repeat;
 }
 
 .game-bg::after {
@@ -1031,12 +1029,12 @@ a {
 @keyframes hubStarPulse {
   0% {
     transform: scale(0.92);
-    filter: drop-shadow(0 0 6px rgba(255, 212, 56, 0.6));
+    opacity: 0.72;
   }
 
   100% {
     transform: scale(1.15);
-    filter: drop-shadow(0 0 18px rgba(255, 212, 56, 1));
+    opacity: 1;
   }
 }
 
@@ -1165,11 +1163,11 @@ a {
 
 @keyframes currentTilePulse {
   0% {
-    box-shadow: 0 7px 0 #0d0907, 0 0 16px rgba(245, 196, 67, 0.45);
+    transform: translateZ(0) scale(1);
   }
 
   100% {
-    box-shadow: 0 7px 0 #0d0907, 0 0 32px rgba(245, 196, 67, 0.85);
+    transform: translateZ(0) scale(1.015);
   }
 }
 
@@ -1200,11 +1198,11 @@ a {
 
 @keyframes finishTrophyPulse {
   0% {
-    box-shadow: 0 7px 0 #3d1400, 0 0 22px rgba(245, 196, 67, 0.5);
+    transform: translateZ(0) scale(1);
   }
 
   100% {
-    box-shadow: 0 7px 0 #3d1400, 0 0 46px rgba(245, 196, 67, 0.9), 0 0 60px rgba(255, 42, 29, 0.5);
+    transform: translateZ(0) scale(1.015);
   }
 }
 
@@ -2495,6 +2493,91 @@ a {
   height: 100vh;
   pointer-events: none;
   z-index: 9999;
+}
+
+/* Browser performance hints: keep the same visuals, limit repaint scope. */
+.game-bg,
+.game-header,
+.game-table,
+.board-zone,
+.quiz-dock,
+.finish-modal,
+.chance-modal,
+.result-modal,
+.admin-modal,
+.track,
+.team-strip,
+.control-panel,
+.spectator-live-bar {
+  transform: translateZ(0);
+}
+
+.board-zone,
+.track,
+.team-strip,
+.quiz-dock,
+.chance-card,
+.result-card,
+.finish-card,
+.admin-dialog,
+.game-confetti {
+  contain: layout paint;
+}
+
+.dice-cube,
+.result-cube,
+.tile.active-landing,
+.token.active-team-pawn,
+.active-turn-arrow {
+  will-change: transform;
+}
+
+.toast.show {
+  will-change: opacity, transform;
+}
+
+body.is-action-running .pulse-emerald,
+body.is-action-running .turn-card span::before,
+body.is-action-running .track-hub::before,
+body.is-action-running .tile.current-turn-tile,
+body.is-action-running .tile.finish,
+body.is-action-running .active-turn-arrow,
+body.is-action-running .token.active-team-pawn,
+body.is-action-running .admin-unlock-chip,
+body.is-action-running .live-pulse-dot {
+  animation-play-state: paused !important;
+}
+
+.tile:hover {
+  box-shadow: 0 7px 0 #0d0907, 0 12px 20px rgba(0, 0, 0, 0.6), inset 0 2px 0 rgba(255, 255, 255, 0.16);
+}
+
+.tile.current-turn-tile:hover {
+  box-shadow: 0 7px 0 #0d0907, 0 0 26px rgba(245, 196, 67, 0.65), inset 0 2px 0 rgba(255, 255, 255, 0.35);
+}
+
+.tile.start:hover {
+  box-shadow: 0 7px 0 #03241d, 0 0 26px rgba(0, 255, 200, 0.45), inset 0 2px 0 rgba(255, 255, 255, 0.5);
+}
+
+.tile.finish:hover {
+  box-shadow: 0 7px 0 #3d1400, 0 0 36px rgba(245, 196, 67, 0.75), inset 0 2px 0 rgba(255, 255, 255, 0.65);
+}
+
+.tile.lucky:hover {
+  box-shadow: 0 7px 0 #062410, 0 0 20px rgba(52, 199, 89, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.3);
+}
+
+.tile.trap:hover {
+  box-shadow: 0 7px 0 #280705, 0 0 20px rgba(255, 69, 58, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.3);
+}
+
+.tile.challenge:hover {
+  box-shadow: 0 7px 0 #071638, 0 0 22px rgba(90, 200, 250, 0.45), inset 0 2px 0 rgba(255, 255, 255, 0.3);
+}
+
+.tile:hover .tile-arrow {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6), 0 0 8px rgba(255, 212, 56, 0.3);
 }
 
 /* Responsive Styles */
