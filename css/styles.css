@@ -394,7 +394,7 @@ button{font:inherit}
 .cq3-overlay{background:linear-gradient(90deg,rgba(18,13,10,.9),rgba(18,13,10,.42)),linear-gradient(180deg,rgba(18,13,10,.18),rgba(18,13,10,.86))}
 .cq3 .container{position:relative;z-index:1}
 .cq3-card{max-width:1060px;padding:clamp(28px,5vw,62px);border-radius:var(--radius);background:rgba(255,250,241,.95);color:var(--ink);box-shadow:var(--shadow)}
-.cq3-title{font-size:clamp(30px,4vw,54px);margin-bottom:22px}
+.cq3-title{max-width:980px;font-size:clamp(30px,4vw,54px);margin-bottom:22px;line-height:1.12;text-wrap:balance}
 .hl-purpose{color:var(--red)}
 .hl-tool{color:var(--teal)}
 .cq3-answer{max-width:850px;margin-bottom:34px;color:var(--muted);font-size:var(--body);line-height:1.8}
